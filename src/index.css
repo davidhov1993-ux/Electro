@@ -1,0 +1,14 @@
+@import "./styles.old.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes home-hero-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
