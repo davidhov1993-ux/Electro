@@ -60,11 +60,11 @@ export function rewriteLocaleInPath(pathname: string, nextLocale: Locale) {
 
 export function navigationLinks(locale: Locale) {
   return [
-    { label: t(locale, navCopy.home), to: localePath(locale), end: true },
-    { label: t(locale, navCopy.services), to: pagePath(locale, "services") },
-    { label: t(locale, navCopy.about), to: pagePath(locale, "about") },
-    { label: t(locale, navCopy.why), to: pagePath(locale, "why") },
-    { label: t(locale, navCopy.certificates), to: pagePath(locale, "certificates") },
-    { label: t(locale, navCopy.contacts), to: pagePath(locale, "contacts") },
+    { label: t(locale, navCopy.home), to: localePath(locale), end: true, hash: "" },
+    { label: t(locale, navCopy.services), to: pagePath(locale, "services"), end: false },
+    { label: t(locale, navCopy.about), to: pagePath(locale, "about"), end: false },
+    { label: t(locale, navCopy.why), to: pagePath(locale, "why"), end: false },
+    { label: t(locale, navCopy.certificates), to: pagePath(locale, "certificates"), end: false },
+    { label: t(locale, navCopy.contacts), to: pagePath(locale, "contacts"), end: false },
   ];
 }

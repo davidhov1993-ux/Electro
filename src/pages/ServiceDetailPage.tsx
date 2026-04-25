@@ -1,6 +1,10 @@
 import { NavLink, useParams } from "react-router-dom";
 
 import { brandName, getRelatedServices, getService, processSteps, t, uiCopy } from "@/src/content/site";
+import { EmergencyServicePage } from "@/src/components/EmergencyServicePage";
+import { InstallationServicePage } from "@/src/components/InstallationServicePage";
+import { LightingServicePage } from "@/src/components/LightingServicePage";
+import { VideoSurveillanceServicePage } from "@/src/components/VideoSurveillanceServicePage";
 import { getServiceMedia } from "@/src/content/serviceMedia";
 import { LeadForm } from "@/src/components/LeadForm";
 import { MediaPlaceholder } from "@/src/components/MediaPlaceholder";
@@ -22,11 +26,26 @@ export function ServiceDetailPage() {
     return <NotFoundPage locale={locale} />;
   }
 
+  if (service.slug === "avariinyi-elektrik") {
+    return <EmergencyServicePage locale={locale} service={service} />;
+  }
+
+  if (service.slug === "elektromontazh") {
+    return <InstallationServicePage locale={locale} service={service} />;
+  }
+
+  if (service.slug === "osveshchenie") {
+    return <LightingServicePage locale={locale} service={service} />;
+  }
+
+  if (service.slug === "videonablyudenie" && locale === "ru") {
+    return <VideoSurveillanceServicePage locale={locale} service={service} />;
+  }
+
   const related = getRelatedServices(service.slug, service.group);
   const media = getServiceMedia(service.slug);
   const requestBasePath = pagePath(locale, "request");
   const requestPath = `${requestBasePath}?service=${service.slug}`;
-  const urgentRequestPath = `${requestBasePath}?service=${service.slug}&type=urgent`;
   const servicePagePath = servicePath(locale, service.slug);
   const faqSchema = createFaqSchema(locale, service.faq);
 
@@ -72,11 +91,6 @@ export function ServiceDetailPage() {
               <NavLink to={requestPath} className="button button--primary">
                 {t(locale, uiCopy.getConsultation)}
               </NavLink>
-              {service.slug === "avariinyi-elektrik" ? (
-                <NavLink to={urgentRequestPath} className="button button--warning">
-                  {t(locale, uiCopy.urgentRequest)}
-                </NavLink>
-                ) : null}
             </div>
 
             <div className="signal-metrics signal-metrics--detail">
@@ -221,7 +235,6 @@ export function ServiceDetailPage() {
             <LeadForm
               key={`${locale}-${service.slug}`}
               locale={locale}
-              urgent={service.slug === "avariinyi-elektrik"}
               defaultServiceSlug={service.slug}
             />
           </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
 import { brandName, t } from "@/src/content/site";
-import { localeSwitchItems, navigationLinks } from "@/src/lib/locale";
+import { localePath, localeSwitchItems, navigationLinks } from "@/src/lib/locale";
 import type { Locale } from "@/src/types";
 
 export function SiteHeader({ locale }: { locale: Locale }) {
@@ -71,7 +71,15 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             <button
               type="button"
               className="header-toggle"
-              aria-label={locale === "ru" ? "Открыть меню" : "Բացել ընտրացանկը"}
+              aria-label={
+                menuOpen
+                  ? locale === "ru"
+                    ? "Закрыть меню"
+                    : "Փակել ընտրացանկը"
+                  : locale === "ru"
+                    ? "Открыть меню"
+                    : "Բացել ընտրացանկը"
+              }
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
               onClick={() => setMenuOpen((current) => !current)}
@@ -96,6 +104,13 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           onClick={() => setMenuOpen(false)}
         />
         <div className="mobile-menu__panel">
+          <div className="mobile-menu__panel-head">
+            <p className="mobile-menu__eyebrow">
+              {locale === "ru" ? "Навигация" : "Նավիգացիա"}
+            </p>
+            <p className="mobile-menu__brand">{brandLabel}</p>
+          </div>
+
           <nav
             className="mobile-menu__nav"
             aria-label={locale === "ru" ? "Мобильная навигация" : "Բջջային նավիգացիա"}
@@ -112,6 +127,16 @@ export function SiteHeader({ locale }: { locale: Locale }) {
               </NavLink>
             ))}
           </nav>
+
+          <div className="mobile-menu__footer">
+            <Link
+              to={localePath(locale)}
+              className="mobile-menu__cta"
+              onClick={() => setMenuOpen(false)}
+            >
+              {locale === "ru" ? "На главную" : "Դեպի գլխավոր"}
+            </Link>
+          </div>
         </div>
       </div>
     </header>

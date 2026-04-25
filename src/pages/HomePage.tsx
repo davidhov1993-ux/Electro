@@ -1,25 +1,50 @@
-import { NavLink } from "react-router-dom";
-
 import { homeSeoContent, hs } from "@/src/content/homeSeo";
+import { HomeObjectsSection } from "@/src/components/HomeObjectsSection";
 import { HomeServiceWall } from "@/src/components/HomeServiceWall";
-import { getService, serviceGroups, t } from "@/src/content/site";
-import { Section } from "@/src/components/Section";
 import { Seo } from "@/src/components/Seo";
 import { usePageLocale } from "@/src/hooks/usePageLocale";
-import { pagePath, servicePath } from "@/src/lib/locale";
 import { createLocalBusinessSchema, createOrganizationSchema } from "@/src/lib/seo";
 
 export function HomePage() {
   const locale = usePageLocale();
-  const contactPath = pagePath(locale, "contacts");
-  const servicesPath = pagePath(locale, "services");
-  const heroMarqueeItems = homeSeoContent.servicesBlock.items.map((item) => hs(locale, item.title));
-  const serviceOverview = serviceGroups
-    .map((group) => ({
-      group,
-      items: homeSeoContent.servicesBlock.items.filter((item) => getService(item.slug)?.group === group.id),
-    }))
-    .filter(({ items }) => items.length > 0);
+  const assetBase = import.meta.env.BASE_URL;
+  const heroVideoSrc = locale === "hy"
+    ? `${assetBase}media/DavoCriator_httpss.mj.runEUk2acGrRdc_animated_graphic_poster__8400b071-e04e-4487-930c-874b7f3bd03b_0.mp4`
+    : `${assetBase}media/DavoCriator_httpss.mj.runUJdjoo-jviU_animated_graphic_poster__34d1f2e0-a56e-408c-b0af-bd140fd198a4_0.mp4`;
+  const heroPosterSrc = locale === "hy"
+    ? `${assetBase}media/DavoCriator_httpss.mj.runEUk2acGrRdc_animated_graphic_poster__8400b071-e04e-4487-930c-874b7f3bd03b_0.gif`
+    : undefined;
+  const heroMarqueeItems = locale === "ru"
+    ? [
+        "Аварийный электрик",
+        "Электромонтаж",
+        "Освещение",
+        "Видеонаблюдение",
+        "Слаботочные системы",
+        "Безопасность",
+        "Тёплый пол",
+        "Автоматизация",
+        "Ремонт",
+        "Диагностика",
+        "Проектирование",
+        "Умный дом",
+        "Солнечные панели",
+      ]
+    : [
+        "Արտակարգ էլեկտրիկ",
+        "Էլեկտրամոնտաժ",
+        "Լուսավորություն",
+        "Տեսահսկում",
+        "Թույլ հոսանքային համակարգեր",
+        "Անվտանգություն",
+        "Տաք հատակ",
+        "Ավտոմատացում",
+        "Վերանորոգում",
+        "Ախտորոշում",
+        "Նախագծում",
+        "Խելացի տուն",
+        "Արևային պանելներ",
+      ];
 
   return (
     <>
@@ -45,9 +70,10 @@ export function HomePage() {
                   muted
                   playsInline
                   preload="auto"
-                  poster="/media/hero-poster-last.jpg"
+                  poster={heroPosterSrc}
                 >
-                  <source src="/media/DavoCriator_httpss.mj.runUJdjoo-jviU_animated_graphic_poster__34d1f2e0-a56e-408c-b0af-bd140fd198a4_0.mp4" type="video/mp4" />
+                  <source src={heroVideoSrc} type="video/mp4" />
+                  {heroPosterSrc ? <img src={heroPosterSrc} alt="" /> : null}
                 </video>
               </div>
               <span className="home-brand-hero__vignette" />
@@ -57,7 +83,12 @@ export function HomePage() {
               <a href="tel:+37499586469" className="home-brand-hero__cta home-brand-hero__cta--dark">
                 {locale === "ru" ? "Позвонить сейчас" : "Զանգահարել հիմա"}
               </a>
-              <a href="https://wa.me/37499586469" target="_blank" rel="noreferrer" className="home-brand-hero__cta home-brand-hero__cta--accent">
+              <a
+                href="https://wa.me/37499586469"
+                target="_blank"
+                rel="noreferrer"
+                className="home-brand-hero__cta home-brand-hero__cta--accent"
+              >
                 WhatsApp
               </a>
             </div>
@@ -77,75 +108,7 @@ export function HomePage() {
 
       <HomeServiceWall locale={locale} />
 
-      <Section
-        layout="wide"
-        className="section--home-page section--home-copy"
-        eyebrow={locale === "ru" ? "Инженерный подход" : "Ինժեներական մոտեցում"}
-        title={hs(locale, homeSeoContent.firstBlock.title)}
-      >
-        <div className="copy-stack">
-          {homeSeoContent.firstBlock.paragraphs.map((paragraph) => (
-            <p key={paragraph.ru}>{hs(locale, paragraph)}</p>
-          ))}
-        </div>
-      </Section>
-
-      <Section
-        layout="wide"
-        className="section--home-page section--home-overview"
-        eyebrow={locale === "ru" ? "Ключевые направления" : "Հիմնական ուղղություններ"}
-        title={
-          locale === "ru"
-            ? "С чем мы работаем"
-            : "Ինչ ուղղություններով ենք աշխատում"
-        }
-        intro={
-          locale === "ru"
-            ? "Электромонтаж, щиты, безопасность, свет, smart-сценарии и аварийные выезды по Еревану."
-            : "Էլեկտրամոնտաժ, վահաններ, անվտանգություն, լուսավորություն, smart սցենարներ և արտակարգ մեկնումներ Երևանում։"
-        }
-      >
-        <div className="service-overview-grid">
-          {serviceOverview.map(({ group, items }) => (
-            <article key={group.id} className="service-overview-grid__item">
-              <p className="service-overview-grid__label">{t(locale, group.title)}</p>
-              <div className="service-overview-grid__links">
-                {items.map((item) => (
-                  <NavLink key={item.slug} to={servicePath(locale, item.slug)} className="service-overview-grid__link">
-                    {hs(locale, item.title)}
-                  </NavLink>
-                ))}
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <div className="section-actions">
-          <NavLink to={servicesPath} className="button button--ghost">
-            {locale === "ru" ? "Смотреть все направления" : "Տեսնել բոլոր ուղղությունները"}
-          </NavLink>
-        </div>
-      </Section>
-
-      <Section
-        layout="wide"
-        className="section--home-page section--home-cta"
-        eyebrow={locale === "ru" ? "Связь и запуск" : "Կապ և մեկնարկ"}
-        title={hs(locale, homeSeoContent.ctaBlock.title)}
-        intro={hs(locale, homeSeoContent.ctaBlock.description)}
-      >
-        <div className="cta-rail">
-          <NavLink to={pagePath(locale, "request")} className="button button--primary">
-            {locale === "ru" ? "Оставить заявку" : "Թողնել հայտ"}
-          </NavLink>
-          <NavLink to={contactPath} className="button button--ghost">
-            {locale === "ru" ? "Позвонить сейчас" : "Զանգահարել հիմա"}
-          </NavLink>
-          <NavLink to={contactPath} className="button button--ghost">
-            WhatsApp
-          </NavLink>
-        </div>
-      </Section>
+      <HomeObjectsSection locale={locale} />
     </>
   );
 }

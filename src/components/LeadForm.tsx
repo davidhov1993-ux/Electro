@@ -1,68 +1,103 @@
 import type { ChangeEvent, FormEvent } from "react";
 import { useId, useState } from "react";
 
-import { isServiceSlug, services, t, uiCopy } from "@/src/content/site";
-import type { Locale, ServiceSlug } from "@/src/types";
+import type { Locale } from "@/src/types";
 
 interface LeadFormProps {
   locale: Locale;
   urgent?: boolean;
   defaultServiceSlug?: string;
+  variant?: "default" | "dark";
+  attachmentsEnabled?: boolean;
 }
-
-type ObjectTypeValue = "" | "apartment" | "house" | "office" | "commercial";
-type ServiceValue = "" | ServiceSlug;
-type UrgencyValue = "normal" | "urgent";
 
 interface LeadFormState {
   name: string;
   phone: string;
-  objectType: ObjectTypeValue;
-  service: ServiceValue;
+  email: string;
   task: string;
-  urgency: UrgencyValue;
 }
 
 type LeadFormErrors = Partial<Record<keyof LeadFormState, string>>;
 type LeadFormStatus = "idle" | "error" | "validated";
 
-const emergencyServiceSlug: ServiceSlug = "avariinyi-elektrik";
-
-function createInitialState(defaultServiceSlug?: string, urgent = false): LeadFormState {
-  const normalizedServiceSlug = defaultServiceSlug && isServiceSlug(defaultServiceSlug) ? defaultServiceSlug : "";
-
+function createInitialState(): LeadFormState {
   return {
     name: "",
     phone: "",
-    objectType: "",
-    service: normalizedServiceSlug || (urgent ? emergencyServiceSlug : ""),
+    email: "",
     task: "",
-    urgency: urgent ? "urgent" : "normal",
   };
+}
+
+const leadFormCopy = {
+  ru: {
+    name: "Имя",
+    phone: "Телефон",
+    email: "Email",
+    message: "Сообщение",
+    namePlaceholder: "Ваше имя",
+    phonePlaceholder: "+374",
+    emailPlaceholder: "example@mail.com",
+    messagePlaceholder: "Коротко опишите задачу, объект и что именно нужно сделать.",
+    filesLabel: "Файлы по объекту",
+    filesButton: "Прикрепить файлы",
+    filesHint: "Фото, схемы, чертежи, сметы, PDF, Word, Excel, PNG, JPG/JPEG.",
+    submit: "Отправить заявку",
+    hint: "Можно сразу отправить запрос и файлы по задаче.",
+    success: "Поля заполнены корректно. Следующим шагом сюда можно подключить реальную отправку заявки.",
+    fixErrors: "Заполните имя, телефон, email и сообщение, чтобы отправить обращение.",
+    invalidName: "Укажите имя.",
+    invalidPhone: "Укажите телефон.",
+    invalidEmail: "Укажите корректный email.",
+    invalidTask: "Коротко опишите задачу.",
+  },
+  hy: {
+    name: "Անուն",
+    phone: "Հեռախոս",
+    email: "Email",
+    message: "Հաղորդագրություն",
+    namePlaceholder: "Ձեր անունը",
+    phonePlaceholder: "+374",
+    emailPlaceholder: "example@mail.com",
+    messagePlaceholder: "Կարճ նկարագրեք խնդիրը, օբյեկտը և ինչ պետք է անել։",
+    filesLabel: "Օբյեկտի ֆայլեր",
+    filesButton: "Կցել ֆայլեր",
+    filesHint: "Լուսանկարներ, սխեմաներ, գծագրեր, նախահաշիվ, PDF, Word, Excel, PNG, JPG/JPEG։",
+    submit: "Ուղարկել հայտը",
+    hint: "Կարելի է անմիջապես ուղարկել հարցումը և առաջադրանքի ֆայլերը։",
+    success: "Դաշտերը ճիշտ են լրացված։ Հաջորդ քայլով այստեղ կարելի է միացնել հայտի իրական ուղարկումը։",
+    fixErrors: "Լրացրեք անունը, հեռախոսը, email-ը և հաղորդագրությունը, որպեսզի դիմումն ուղարկվի։",
+    invalidName: "Նշեք անունը։",
+    invalidPhone: "Նշեք հեռախոսահամարը։",
+    invalidEmail: "Նշեք ճիշտ email։",
+    invalidTask: "Կարճ նկարագրեք խնդիրը։",
+  },
+} as const;
+
+function hasValidEmail(value: string) {
+  return /\S+@\S+\.\S+/.test(value.trim());
 }
 
 function validateForm(locale: Locale, values: LeadFormState): LeadFormErrors {
   const errors: LeadFormErrors = {};
   const phoneDigits = values.phone.replace(/\D/g, "");
+  const copy = leadFormCopy[locale];
 
   if (values.name.trim().length < 2) {
-    errors.name = t(locale, uiCopy.invalidName);
+    errors.name = copy.invalidName;
   }
 
   if (phoneDigits.length < 7) {
-    errors.phone = t(locale, uiCopy.invalidPhone);
+    errors.phone = copy.invalidPhone;
   }
 
-  if (!values.objectType) {
-    errors.objectType = t(locale, uiCopy.invalidObjectType);
-  }
-
-  if (!values.service || !isServiceSlug(values.service)) {
-    errors.service = t(locale, uiCopy.invalidService);
+  if (!hasValidEmail(values.email)) {
+    errors.email = copy.invalidEmail;
   }
 
   if (values.task.trim().length < 10) {
-    errors.task = t(locale, uiCopy.invalidTask);
+    errors.task = copy.invalidTask;
   }
 
   return errors;
@@ -72,18 +107,22 @@ function sanitizePhoneInput(value: string) {
   return value.replace(/[^\d+\s()-]/g, "").slice(0, 24);
 }
 
-export function LeadForm({ locale, urgent = false, defaultServiceSlug }: LeadFormProps) {
+export function LeadForm({
+  locale,
+  urgent: _urgent = false,
+  defaultServiceSlug: _defaultServiceSlug,
+  variant = "default",
+  attachmentsEnabled = false,
+}: LeadFormProps) {
   const formId = useId();
-  const [values, setValues] = useState<LeadFormState>(() => createInitialState(defaultServiceSlug, urgent));
+  const copy = leadFormCopy[locale];
+  const [values, setValues] = useState<LeadFormState>(() => createInitialState());
   const [errors, setErrors] = useState<LeadFormErrors>({});
   const [status, setStatus] = useState<LeadFormStatus>("idle");
+  const [attachmentNames, setAttachmentNames] = useState<string[]>([]);
 
   const note =
-    status === "validated"
-      ? t(locale, uiCopy.formSuccess)
-      : status === "error"
-        ? t(locale, uiCopy.fixErrors)
-        : t(locale, uiCopy.formHint);
+    status === "validated" ? copy.success : status === "error" ? copy.fixErrors : copy.hint;
 
   const handleFieldChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const field = event.target.name as keyof LeadFormState;
@@ -101,6 +140,15 @@ export function LeadForm({ locale, urgent = false, defaultServiceSlug }: LeadFor
         return nextErrors;
       });
     }
+
+    if (status !== "idle") {
+      setStatus("idle");
+    }
+  };
+
+  const handleAttachmentsChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files ?? []).slice(0, 8);
+    setAttachmentNames(files.map((file) => file.name));
 
     if (status !== "idle") {
       setStatus("idle");
@@ -125,19 +173,20 @@ export function LeadForm({ locale, urgent = false, defaultServiceSlug }: LeadFor
   const fieldErrorId = (field: keyof LeadFormState) => `${formId}-${field}-error`;
   const fieldInputId = (field: keyof LeadFormState) => `${formId}-${field}`;
   const fieldDescribedBy = (field: keyof LeadFormState) => (errors[field] ? fieldErrorId(field) : undefined);
+  const attachmentInputId = `${formId}-attachments`;
 
   return (
-    <form className="lead-form" onSubmit={handleSubmit} noValidate>
+    <form className={`lead-form ${variant === "dark" ? "lead-form--dark" : ""}`.trim()} onSubmit={handleSubmit} noValidate>
       <div className="form-grid">
         <label>
-          <span>{t(locale, uiCopy.name)}</span>
+          <span>{copy.name}</span>
           <input
             id={fieldInputId("name")}
             type="text"
             name="name"
             value={values.name}
             onChange={handleFieldChange}
-            placeholder={locale === "ru" ? "Ваше имя" : "Ձեր անունը"}
+            placeholder={copy.namePlaceholder}
             className={fieldClassName("name")}
             autoComplete="name"
             minLength={2}
@@ -152,14 +201,14 @@ export function LeadForm({ locale, urgent = false, defaultServiceSlug }: LeadFor
           ) : null}
         </label>
         <label>
-          <span>{t(locale, uiCopy.phone)}</span>
+          <span>{copy.phone}</span>
           <input
             id={fieldInputId("phone")}
             type="tel"
             name="phone"
             value={values.phone}
             onChange={handleFieldChange}
-            placeholder="+374"
+            placeholder={copy.phonePlaceholder}
             className={fieldClassName("phone")}
             inputMode="tel"
             autoComplete="tel"
@@ -175,60 +224,28 @@ export function LeadForm({ locale, urgent = false, defaultServiceSlug }: LeadFor
           ) : null}
         </label>
         <label>
-          <span>{t(locale, uiCopy.objectType)}</span>
-          <select
-            id={fieldInputId("objectType")}
-            name="objectType"
-            value={values.objectType}
+          <span>{copy.email}</span>
+          <input
+            id={fieldInputId("email")}
+            type="email"
+            name="email"
+            value={values.email}
             onChange={handleFieldChange}
-            className={fieldClassName("objectType")}
+            placeholder={copy.emailPlaceholder}
+            className={fieldClassName("email")}
+            autoComplete="email"
             required
-            aria-invalid={errors.objectType ? true : undefined}
-            aria-describedby={fieldDescribedBy("objectType")}
-          >
-            <option value="" disabled>
-              {locale === "ru" ? "Выберите объект" : "Ընտրեք օբյեկտը"}
-            </option>
-            <option value="apartment">{locale === "ru" ? "Квартира" : "Բնակարան"}</option>
-            <option value="house">{locale === "ru" ? "Дом" : "Տուն"}</option>
-            <option value="office">{locale === "ru" ? "Офис" : "Գրասենյակ"}</option>
-            <option value="commercial">{locale === "ru" ? "Коммерческий объект" : "Կոմերցիոն օբյեկտ"}</option>
-          </select>
-          {errors.objectType ? (
-            <span id={fieldErrorId("objectType")} className="form-error">
-              {errors.objectType}
-            </span>
-          ) : null}
-        </label>
-        <label>
-          <span>{t(locale, uiCopy.service)}</span>
-          <select
-            id={fieldInputId("service")}
-            name="service"
-            value={values.service}
-            onChange={handleFieldChange}
-            className={fieldClassName("service")}
-            required
-            aria-invalid={errors.service ? true : undefined}
-            aria-describedby={fieldDescribedBy("service")}
-          >
-            <option value="" disabled>
-              {locale === "ru" ? "Выберите направление" : "Ընտրեք ուղղությունը"}
-            </option>
-            {services.map((service) => (
-              <option key={service.slug} value={service.slug}>
-                {t(locale, service.title)}
-              </option>
-            ))}
-          </select>
-          {errors.service ? (
-            <span id={fieldErrorId("service")} className="form-error">
-              {errors.service}
+            aria-invalid={errors.email ? true : undefined}
+            aria-describedby={fieldDescribedBy("email")}
+          />
+          {errors.email ? (
+            <span id={fieldErrorId("email")} className="form-error">
+              {errors.email}
             </span>
           ) : null}
         </label>
         <label className="form-grid__wide">
-          <span>{t(locale, uiCopy.task)}</span>
+          <span>{copy.message}</span>
           <textarea
             id={fieldInputId("task")}
             name="task"
@@ -242,9 +259,7 @@ export function LeadForm({ locale, urgent = false, defaultServiceSlug }: LeadFor
             aria-invalid={errors.task ? true : undefined}
             aria-describedby={fieldDescribedBy("task")}
             placeholder={
-              locale === "ru"
-                ? "Опишите объект, симптомы или то, что нужно реализовать."
-                : "Նկարագրեք օբյեկտը, ախտանիշները կամ այն, ինչ պետք է իրականացնել։"
+              copy.messagePlaceholder
             }
           />
           {errors.task ? (
@@ -253,18 +268,33 @@ export function LeadForm({ locale, urgent = false, defaultServiceSlug }: LeadFor
             </span>
           ) : null}
         </label>
-        <label>
-          <span>{t(locale, uiCopy.urgency)}</span>
-          <select id={fieldInputId("urgency")} name="urgency" value={values.urgency} onChange={handleFieldChange}>
-            <option value="normal">{t(locale, uiCopy.normal)}</option>
-            <option value="urgent">{t(locale, uiCopy.urgent)}</option>
-          </select>
-        </label>
+        {attachmentsEnabled ? (
+          <label className="form-grid__wide form-upload" htmlFor={attachmentInputId}>
+            <span>{copy.filesLabel}</span>
+            <input
+              id={attachmentInputId}
+              type="file"
+              multiple
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+              className="form-upload__input"
+              onChange={handleAttachmentsChange}
+            />
+            <span className="form-upload__control">
+              <span className="form-upload__button">{copy.filesButton}</span>
+              <span className="form-upload__hint">{copy.filesHint}</span>
+            </span>
+            {attachmentNames.length > 0 ? (
+              <span className="form-upload__list" aria-live="polite">
+                {attachmentNames.join(" · ")}
+              </span>
+            ) : null}
+          </label>
+        ) : null}
       </div>
 
       <div className="form-actions">
         <button type="submit" className="button button--primary">
-          {t(locale, uiCopy.send)}
+          {copy.submit}
         </button>
         <p
           className={`form-note ${status === "validated" ? "form-note--success" : status === "error" ? "form-note--error" : ""}`.trim()}

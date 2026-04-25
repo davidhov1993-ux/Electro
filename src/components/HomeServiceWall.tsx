@@ -4,24 +4,19 @@ import { servicePath } from "@/src/lib/locale";
 import type { Locale } from "@/src/types";
 
 const seoWallItems = [
-  { slug: "avariinyi-elektrik",             label: { ru: "Аварийный электрик",   hy: "Ававарийин электрик" } },
-  { slug: "elektromontazh",                 label: { ru: "Электромонтаж",        hy: "Электромонтаж" } },
-  { slug: "elektroshchity-i-avtomatika",    label: { ru: "Электрощиты",          hy: "Электращиты" } },
-  { slug: "osveshchenie",                   label: { ru: "Освещение",            hy: "Освещение" } },
-  { slug: "videonablyudenie",               label: { ru: "Видеонаблюдение",      hy: "Видеонаблюдение" } },
-  { slug: "slabotochnye-sistemy",           label: { ru: "Слаботочные системы",  hy: "Слаботочные системы" } },
-  { slug: "elektrozamki-i-kontrol-dostupa", label: { ru: "Электрозамки",         hy: "Электрозамки" } },
-  { slug: "elektrozamki-i-kontrol-dostupa", label: { ru: "Контроль доступа",     hy: "Контроль доступа" } },
-  { slug: "teplyi-pol",                     label: { ru: "Тёплый пол",           hy: "Тёплый пол" } },
-  { slug: "umnyi-dom-i-umnaya-tekhnika",    label: { ru: "Умный дом",            hy: "Умный дом" } },
-  { slug: "umnyi-dom-i-umnaya-tekhnika",    label: { ru: "Автоматизация",        hy: "Автоматизация" } },
-  { slug: "elektromontazh",                 label: { ru: "Замена проводки",      hy: "Замена проводки" } },
-  { slug: "elektromontazh",                 label: { ru: "Разводка электрики",   hy: "Разводка электрики" } },
-  { slug: "elektromontazh",                 label: { ru: "Ремонт проводки",      hy: "Ремонт проводки" } },
-  { slug: "elektromontazh",                 label: { ru: "Розетки и выключатели",hy: "Розетки и выключатели" } },
-  { slug: "elektromontazh",                 label: { ru: "Проектирование",       hy: "Проектирование" } },
-  { slug: "avariinyi-elektrik",             label: { ru: "Диагностика",          hy: "Диагностика" } },
-  { slug: "elektromontazh",                 label: { ru: "Заземление",           hy: "Заземление" } },
+  { slug: "avariinyi-elektrik",             label: { ru: "Аварийный электрик",   hy: "Արտակարգ էլեկտրիկ" } },
+  { slug: "elektromontazh",                 label: { ru: "Электромонтаж",        hy: "Էլեկտրամոնտաժ" } },
+  { slug: "osveshchenie",                   label: { ru: "Освещение",            hy: "Լուսավորություն" } },
+  { slug: "videonablyudenie",               label: { ru: "Видеонаблюдение",      hy: "Տեսահսկում" } },
+  { slug: "slabotochnye-sistemy",           label: { ru: "Слаботочные системы",  hy: "Թույլ հոսանքային համակարգեր" } },
+  { slug: "elektrozamki-i-kontrol-dostupa", label: { ru: "Безопасность",         hy: "Անվտանգություն" } },
+  { slug: "teplyi-pol",                     label: { ru: "Тёплый пол",           hy: "Տաք հատակ" } },
+  { slug: "umnyi-dom-i-umnaya-tekhnika",    label: { ru: "Автоматизация",        hy: "Ավտոմատացում" } },
+  { slug: "elektromontazh",                 label: { ru: "Ремонт",               hy: "Վերանորոգում" } },
+  { slug: "avariinyi-elektrik",             label: { ru: "Диагностика",          hy: "Ախտորոշում" } },
+  { slug: "slozhnye-proekty-pod-klyuch",    label: { ru: "Проектирование",       hy: "Նախագծում" } },
+  { slug: "umnyi-dom-i-umnaya-tekhnika",    label: { ru: "Умный дом",            hy: "Խելացի տուն" } },
+  { slug: "slozhnye-proekty-pod-klyuch",    label: { ru: "Солнечные панели",     hy: "Արևային պանելներ" } },
 ] as const;
 
 const content = {
@@ -39,17 +34,17 @@ const content = {
     servicesLabel: "Ключевые направления",
   },
   hy: {
-    attention: "ՈՒՇАДРУТЮН",
-    attentionHint: "Штап кап у мeкнум",
-    titleLineOne: "ПЕТК Э ЛУЦЕЛ",
-    titleAccent: "ХАРЦЭ",
-    titleTail: "ЭЛЕКТРИКАЙИ?",
-    triggerLabel: "★ АНВЧАР ХОРHУРДАТВУТЮН",
+    attention: "ՈՒՇԱԴՐՈՒԹՅՈՒՆ",
+    attentionHint: "Արագ կապ և մեկնում",
+    titleLineOne: "ՊԵՏՔ Է ԼՈՒԾԵԼ",
+    titleAccent: "ՀԱՐՑԸ",
+    titleTail: "ԷԼԵԿՏՐԻԿԱՅԻ՞",
+    triggerLabel: "Անվճար խորհրդատվության համար զանգահարեք",
     phone: "+374 99 586 469",
-    phoneLabel: "Зангахарел",
+    phoneLabel: "Զանգահարել",
     whatsappLabel: "WhatsApp",
-    sectionLabel: "Электрики SEO хатвац Еревaнум",
-    servicesLabel: "Бoлор угhутюннерe",
+    sectionLabel: "Էլեկտրիկի SEO բլոկ Երևանում",
+    servicesLabel: "Հիմնական ուղղություններ",
   },
 } as const;
 
@@ -87,6 +82,7 @@ export function HomeServiceWall({ locale }: { locale: Locale }) {
                 <span className="cta-label">{c.triggerLabel}</span>
                 <a href={phoneHref} className="cta-phone">{c.phone}</a>
               </div>
+
               <div className="cta-right">
                 <a href={phoneHref} className="btn-primary" aria-label={c.phoneLabel}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="#0a0a0a" aria-hidden="true">
@@ -113,11 +109,11 @@ export function HomeServiceWall({ locale }: { locale: Locale }) {
       <div className="home-service-wall__services">
         <p className="home-service-wall__services-label">{c.servicesLabel}</p>
         <div className="home-service-wall__services-grid">
-          {seoWallItems.map((item, index) => (
+          {seoWallItems.map((item) => (
             <NavLink
               key={`${locale}-${item.label.ru}`}
               to={servicePath(locale, item.slug)}
-              className={`home-service-wall__service-tag${index === 0 ? " home-service-wall__service-tag--active" : ""}`}
+              className="home-service-wall__service-tag"
             >
               {item.label[locale]}
             </NavLink>

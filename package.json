@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "node scripts/generate-sitemap.mjs && tsc -b && vite build",
+    "build:pages": "node scripts/generate-sitemap.mjs && tsc -b && vite build --base=/Electro/",
     "preview": "vite preview"
   },
   "dependencies": {
