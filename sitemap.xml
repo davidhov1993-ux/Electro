@@ -4,31 +4,13 @@
     <loc>https://example.com/ru</loc>
   </url>
   <url>
-    <loc>https://example.com/ru/uslugi</loc>
-  </url>
-  <url>
     <loc>https://example.com/ru/o-kompanii</loc>
-  </url>
-  <url>
-    <loc>https://example.com/ru/pochemu-vybirayut-nas</loc>
-  </url>
-  <url>
-    <loc>https://example.com/ru/sertifikaty</loc>
   </url>
   <url>
     <loc>https://example.com/ru/kontakty</loc>
   </url>
   <url>
-    <loc>https://example.com/ru/zayavka</loc>
-  </url>
-  <url>
     <loc>https://example.com/ru/uslugi/elektromontazh</loc>
-  </url>
-  <url>
-    <loc>https://example.com/ru/uslugi/220v</loc>
-  </url>
-  <url>
-    <loc>https://example.com/ru/uslugi/380v</loc>
   </url>
   <url>
     <loc>https://example.com/ru/uslugi/elektroshchity-i-avtomatika</loc>
@@ -55,37 +37,16 @@
     <loc>https://example.com/ru/uslugi/avariinyi-elektrik</loc>
   </url>
   <url>
-    <loc>https://example.com/ru/uslugi/slozhnye-proekty-pod-klyuch</loc>
-  </url>
-  <url>
     <loc>https://example.com/hy</loc>
-  </url>
-  <url>
-    <loc>https://example.com/hy/uslugi</loc>
   </url>
   <url>
     <loc>https://example.com/hy/o-kompanii</loc>
   </url>
   <url>
-    <loc>https://example.com/hy/pochemu-vybirayut-nas</loc>
-  </url>
-  <url>
-    <loc>https://example.com/hy/sertifikaty</loc>
-  </url>
-  <url>
     <loc>https://example.com/hy/kontakty</loc>
   </url>
   <url>
-    <loc>https://example.com/hy/zayavka</loc>
-  </url>
-  <url>
     <loc>https://example.com/hy/uslugi/elektromontazh</loc>
-  </url>
-  <url>
-    <loc>https://example.com/hy/uslugi/220v</loc>
-  </url>
-  <url>
-    <loc>https://example.com/hy/uslugi/380v</loc>
   </url>
   <url>
     <loc>https://example.com/hy/uslugi/elektroshchity-i-avtomatika</loc>
@@ -110,8 +71,5 @@
   </url>
   <url>
     <loc>https://example.com/hy/uslugi/avariinyi-elektrik</loc>
-  </url>
-  <url>
-    <loc>https://example.com/hy/uslugi/slozhnye-proekty-pod-klyuch</loc>
   </url>
 </urlset>
