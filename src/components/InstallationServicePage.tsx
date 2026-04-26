@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { PageBreadcrumbs } from "@/src/components/PageBreadcrumbs";
 import { Seo } from "@/src/components/Seo";
 import { brandName, t } from "@/src/content/site";
-import { pagePath, servicePath } from "@/src/lib/locale";
+import { pagePath, servicePath, servicesAnchor } from "@/src/lib/locale";
 import { createBreadcrumbSchema, createServiceSchema } from "@/src/lib/seo";
 import type { Locale, ServiceEntry } from "@/src/types";
 
@@ -142,7 +142,7 @@ export function InstallationServicePage({ locale, service }: InstallationService
         structuredData={[
           createBreadcrumbSchema([
             { name: locale === "ru" ? "Главная" : "Գլխավոր", path: `/${locale}` },
-            { name: locale === "ru" ? "Услуги" : "Ծառայություններ", path: pagePath(locale, "services") },
+            { name: locale === "ru" ? "Услуги" : "Ծառայություններ", path: servicesAnchor(locale) },
             { name: t(locale, service.title), path: servicePagePath },
           ]),
           createServiceSchema(locale, service, servicePagePath),
@@ -156,7 +156,7 @@ export function InstallationServicePage({ locale, service }: InstallationService
               ariaLabel={locale === "ru" ? "Хлебные крошки" : "Նավարկման շղթա"}
               items={[
                 { label: locale === "ru" ? "Главная" : "Գլխավոր", to: `/${locale}` },
-                { label: locale === "ru" ? "Услуги" : "Ծառայություններ", to: pagePath(locale, "services") },
+                { label: locale === "ru" ? "Услуги" : "Ծառայություններ", to: servicesAnchor(locale) },
                 { label: t(locale, service.title) },
               ]}
             />

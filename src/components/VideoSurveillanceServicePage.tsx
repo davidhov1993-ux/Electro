@@ -2,7 +2,7 @@ import { LeadForm } from "@/src/components/LeadForm";
 import { PageBreadcrumbs } from "@/src/components/PageBreadcrumbs";
 import { Seo } from "@/src/components/Seo";
 import { brandName, t } from "@/src/content/site";
-import { pagePath, servicePath } from "@/src/lib/locale";
+import { servicePath, servicesAnchor } from "@/src/lib/locale";
 import { createBreadcrumbSchema, createFaqSchema, createServiceSchema } from "@/src/lib/seo";
 import type { Locale, ServiceEntry } from "@/src/types";
 
@@ -117,7 +117,7 @@ export function VideoSurveillanceServicePage({ locale, service }: VideoSurveilla
         structuredData={[
           createBreadcrumbSchema([
             { name: "Главная", path: `/${locale}` },
-            { name: "Услуги", path: pagePath(locale, "services") },
+            { name: "Услуги", path: servicesAnchor(locale) },
             { name: t(locale, service.title), path: servicePagePath },
           ]),
           createServiceSchema(locale, service, servicePagePath),
@@ -132,7 +132,7 @@ export function VideoSurveillanceServicePage({ locale, service }: VideoSurveilla
               ariaLabel="Хлебные крошки"
               items={[
                 { label: "Главная", to: `/${locale}` },
-                { label: "Услуги", to: pagePath(locale, "services") },
+                { label: "Услуги", to: servicesAnchor(locale) },
                 { label: t(locale, service.title) },
               ]}
             />

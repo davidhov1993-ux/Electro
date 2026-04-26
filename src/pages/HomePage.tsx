@@ -49,6 +49,11 @@ export function HomePage() {
       />
 
       <section className="signal-hero signal-hero--home home-brand-hero">
+        <h1 className="sr-only">
+          {locale === "ru"
+            ? "Электрик в Ереване: электромонтаж, аварийный выезд и инженерные системы"
+            : "Էլեկտրիկ Երևանում՝ էլեկտրամոնտաժ, արտակարգ մեկնում և ինժեներական համակարգեր"}
+        </h1>
         <div className="home-brand-hero__viewport">
           <div className="home-brand-hero__stage">
             <div className="home-brand-hero__media" aria-hidden="true">

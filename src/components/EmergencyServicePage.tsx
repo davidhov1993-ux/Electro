@@ -3,7 +3,7 @@ import { Seo } from "@/src/components/Seo";
 import { brandName, t } from "@/src/content/site";
 import type { Locale, ServiceEntry } from "@/src/types";
 import { createBreadcrumbSchema, createServiceSchema } from "@/src/lib/seo";
-import { pagePath, servicePath } from "@/src/lib/locale";
+import { servicePath, servicesAnchor } from "@/src/lib/locale";
 
 const phone = "+374 99 586 469";
 const phoneHref = "tel:+37499586469";
@@ -154,7 +154,7 @@ export function EmergencyServicePage({ locale, service }: EmergencyServicePagePr
         structuredData={[
           createBreadcrumbSchema([
             { name: locale === "ru" ? "Главная" : "Գլխավոր", path: `/${locale}` },
-            { name: locale === "ru" ? "Услуги" : "Ծառայություններ", path: pagePath(locale, "services") },
+            { name: locale === "ru" ? "Услуги" : "Ծառայություններ", path: servicesAnchor(locale) },
             { name: t(locale, service.title), path: servicePagePath },
           ]),
           createServiceSchema(locale, service, servicePagePath),
@@ -168,7 +168,7 @@ export function EmergencyServicePage({ locale, service }: EmergencyServicePagePr
               ariaLabel={locale === "ru" ? "Хлебные крошки" : "Նավարկման շղթա"}
               items={[
                 { label: locale === "ru" ? "Главная" : "Գլխավոր", to: `/${locale}` },
-                { label: locale === "ru" ? "Услуги" : "Ծառայություններ", to: pagePath(locale, "services") },
+                { label: locale === "ru" ? "Услуги" : "Ծառայություններ", to: servicesAnchor(locale) },
                 { label: t(locale, service.title) },
               ]}
             />

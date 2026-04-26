@@ -4,9 +4,6 @@
     <loc>https://example.com/ru</loc>
   </url>
   <url>
-    <loc>https://example.com/ru/uslugi</loc>
-  </url>
-  <url>
     <loc>https://example.com/ru/o-kompanii</loc>
   </url>
   <url>
@@ -41,9 +38,6 @@
   </url>
   <url>
     <loc>https://example.com/hy</loc>
-  </url>
-  <url>
-    <loc>https://example.com/hy/uslugi</loc>
   </url>
   <url>
     <loc>https://example.com/hy/o-kompanii</loc>

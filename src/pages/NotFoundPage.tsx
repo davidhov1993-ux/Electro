@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import { Seo } from "@/src/components/Seo";
 import { brandName, t } from "@/src/content/site";
-import { pagePath } from "@/src/lib/locale";
+import { servicesAnchor } from "@/src/lib/locale";
 import { usePageLocale } from "@/src/hooks/usePageLocale";
 import type { Locale } from "@/src/types";
 
@@ -39,7 +39,7 @@ export function NotFoundPage({ locale }: NotFoundPageProps) {
               <Link to={`/${locale}`} className="button button--primary">
                 {locale === "ru" ? "На главную" : "Գլխավոր էջ"}
               </Link>
-              <Link to={pagePath(locale, "services")} className="button button--ghost">
+              <Link to={servicesAnchor(locale)} className="button button--ghost">
                 {locale === "ru" ? "К услугам" : "Դեպի ծառայություններ"}
               </Link>
             </div>

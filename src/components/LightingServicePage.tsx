@@ -4,7 +4,7 @@ import { LeadForm } from "@/src/components/LeadForm";
 import { PageBreadcrumbs } from "@/src/components/PageBreadcrumbs";
 import { Seo } from "@/src/components/Seo";
 import { brandName, t } from "@/src/content/site";
-import { pagePath, servicePath } from "@/src/lib/locale";
+import { pagePath, servicePath, servicesAnchor } from "@/src/lib/locale";
 import { createBreadcrumbSchema, createFaqSchema, createServiceSchema } from "@/src/lib/seo";
 import type { Locale, ServiceEntry } from "@/src/types";
 
@@ -372,7 +372,7 @@ function LightingRuServicePage({ locale, service }: LightingServicePageProps) {
         structuredData={[
           createBreadcrumbSchema([
             { name: "Главная", path: `/${locale}` },
-            { name: "Услуги", path: pagePath(locale, "services") },
+            { name: "Услуги", path: servicesAnchor(locale) },
             { name: t(locale, service.title), path: servicePagePath },
           ]),
           createServiceSchema(locale, service, servicePagePath),
@@ -387,7 +387,7 @@ function LightingRuServicePage({ locale, service }: LightingServicePageProps) {
               ariaLabel="Хлебные крошки"
               items={[
                 { label: "Главная", to: `/${locale}` },
-                { label: "Услуги", to: pagePath(locale, "services") },
+                { label: "Услуги", to: servicesAnchor(locale) },
                 { label: t(locale, service.title) },
               ]}
             />
@@ -726,7 +726,7 @@ function LegacyLightingServicePage({ locale, service }: { locale: "hy"; service:
         structuredData={[
           createBreadcrumbSchema([
             { name: "Գլխավոր", path: `/${locale}` },
-            { name: "Ծառայություններ", path: pagePath(locale, "services") },
+            { name: "Ծառայություններ", path: servicesAnchor(locale) },
             { name: t(locale, service.title), path: servicePagePath },
           ]),
           createServiceSchema(locale, service, servicePagePath),
@@ -741,7 +741,7 @@ function LegacyLightingServicePage({ locale, service }: { locale: "hy"; service:
               ariaLabel="Նավարկման շղթա"
               items={[
                 { label: "Գլխավոր", to: `/${locale}` },
-                { label: "Ծառայություններ", to: pagePath(locale, "services") },
+                { label: "Ծառայություններ", to: servicesAnchor(locale) },
                 { label: t(locale, service.title) },
               ]}
             />

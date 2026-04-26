@@ -6,7 +6,6 @@ import { ContactsPage } from "@/src/pages/ContactsPage";
 import { HomePage } from "@/src/pages/HomePage";
 import { InfoPage } from "@/src/pages/InfoPage";
 import { ServiceDetailPage } from "@/src/pages/ServiceDetailPage";
-import { ServicesPage } from "@/src/pages/ServicesPage";
 
 const basename = import.meta.env.BASE_URL === "/" ? "/" : import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -15,6 +14,13 @@ function LocalizedHomeRedirect() {
   const locale = params.locale ?? defaultLocale;
 
   return <Navigate to={`/${locale}`} replace />;
+}
+
+function LocalizedServicesRedirect() {
+  const params = useParams();
+  const locale = params.locale ?? defaultLocale;
+
+  return <Navigate to={`/${locale}#uslugi`} replace />;
 }
 
 function LocaleSlugRedirect({ slug }: { slug: string }) {
@@ -39,7 +45,7 @@ export const router = createBrowserRouter([
       },
       {
         path: commonSlugs.services,
-        element: <ServicesPage />,
+        element: <LocalizedServicesRedirect />,
       },
       {
         path: `${commonSlugs.services}/:slug`,

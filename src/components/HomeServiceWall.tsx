@@ -1,44 +1,79 @@
+import type { ComponentType } from "react";
 import { NavLink } from "react-router-dom";
 
+import {
+  AccessMotionIcon,
+  CameraMotionIcon,
+  FloorHeatMotionIcon,
+  InternetLowVoltageIcon,
+  LightBulbIcon,
+  PanelMotionIcon,
+  ServiceVanIcon,
+  SmartHomeMotionIcon,
+  WiringMotionIcon,
+} from "@/src/components/icons";
+import { services, t } from "@/src/content/site";
 import { servicePath } from "@/src/lib/locale";
-import type { Locale } from "@/src/types";
+import type { Locale, ServiceSlug } from "@/src/types";
 
-const wallItems = [
-  { slug: "avariinyi-elektrik",             label: { ru: "Аварийный выезд",      hy: "Արտակարգ մեկնում" } },
-  { slug: "elektromontazh",                 label: { ru: "Электромонтаж",        hy: "Էլեկտրամոնտաժ" } },
-  { slug: "elektroshchity-i-avtomatika",    label: { ru: "Щиты и автоматика",    hy: "Վահաններ" } },
-  { slug: "osveshchenie",                   label: { ru: "Освещение",            hy: "Լուսավորություն" } },
-  { slug: "videonablyudenie",               label: { ru: "Видеонаблюдение",      hy: "Տեսահսկում" } },
-  { slug: "elektrozamki-i-kontrol-dostupa", label: { ru: "Замки и домофоны",     hy: "Կողպեքներ և դոմոֆոններ" } },
-  { slug: "slabotochnye-sistemy",           label: { ru: "Слаботочка",           hy: "Թույլ հոսանք" } },
-  { slug: "teplyi-pol",                     label: { ru: "Тёплый пол",           hy: "Տաք հատակ" } },
-  { slug: "umnyi-dom-i-umnaya-tekhnika",    label: { ru: "Умный дом",            hy: "Խելացի տուն" } },
-] as const;
+type IconComponent = ComponentType<{ className?: string; title?: string }>;
+
+const serviceIcons: Partial<Record<ServiceSlug, IconComponent>> = {
+  elektromontazh: WiringMotionIcon,
+  "elektroshchity-i-avtomatika": PanelMotionIcon,
+  osveshchenie: LightBulbIcon,
+  videonablyudenie: CameraMotionIcon,
+  "elektrozamki-i-kontrol-dostupa": AccessMotionIcon,
+  "umnyi-dom-i-umnaya-tekhnika": SmartHomeMotionIcon,
+  "teplyi-pol": FloorHeatMotionIcon,
+  "slabotochnye-sistemy": InternetLowVoltageIcon,
+  "avariinyi-elektrik": ServiceVanIcon,
+};
+
+const primaryServiceSlug: ServiceSlug = "avariinyi-elektrik";
+const catalogServices = [
+  ...services.filter((service) => service.slug === primaryServiceSlug),
+  ...services.filter((service) => service.slug !== primaryServiceSlug),
+];
 
 const content = {
   ru: {
-    attention: "ВЫЗОВ",
-    attentionHint: "Звонок и выезд по Еревану",
-    title: "Нужен электрик?",
-    subtitle: "Опишите задачу — посчитаем и приедем.",
-    triggerLabel: "Звонок без скрытых платежей",
+    attention: "ВНИМАНИЕ",
+    attentionHint: "Оперативная связь и выезд",
+    titleLineOne: "НУЖНО РЕШИТЬ",
+    titleAccent: "ВОПРОС",
+    titleTail: "С ЭЛЕКТРИКОЙ?",
+    triggerLabel: "Для бесплатной консультации — звоните",
     phone: "+374 99 586 469",
     phoneLabel: "Позвонить",
     whatsappLabel: "WhatsApp",
-    sectionLabel: "Услуги электрика в Ереване",
-    servicesLabel: "Чем занимаемся",
+    sectionLabel: "SEO блок с услугами электрика в Ереване",
+    eyebrow: "Услуги",
+    eyebrowHint: "Электрик в Ереване",
+    heading: "Что мы делаем",
+    subtitle: "Электромонтаж, щиты, освещение, слаботочка, видеонаблюдение, тёплый пол и аварийный выезд.",
+    servicesLabel: "Направления",
+    primaryLabel: "Срочный выезд",
+    more: "Подробнее",
   },
   hy: {
-    attention: "ԿԱՆՉ",
-    attentionHint: "Զանգ և մեկնում Երևանում",
-    title: "Պետք է էլեկտրիկ։",
-    subtitle: "Նկարագրեք խնդիրը՝ կհաշվարկենք և կգանք։",
-    triggerLabel: "Զանգ՝ առանց թաքնված վճարների",
+    attention: "ՈՒՇԱԴՐՈՒԹՅՈՒՆ",
+    attentionHint: "Արագ կապ և մեկնում",
+    titleLineOne: "ՊԵՏՔ Է ԼՈՒԾԵԼ",
+    titleAccent: "ՀԱՐՑ",
+    titleTail: "ԷԼԵԿՏՐԻԿԱՅԻ՞",
+    triggerLabel: "Անվճար խորհրդատվության համար զանգահարեք",
     phone: "+374 99 586 469",
     phoneLabel: "Զանգահարել",
     whatsappLabel: "WhatsApp",
-    sectionLabel: "Էլեկտրիկի ծառայություններ Երևանում",
-    servicesLabel: "Ինչով ենք զբաղվում",
+    sectionLabel: "Էլեկտրիկի SEO բլոկ Երևանում",
+    eyebrow: "Ծառայություններ",
+    eyebrowHint: "Էլեկտրիկ Երևանում",
+    heading: "Ինչ ենք անում",
+    subtitle: "Էլեկտրամոնտաժ, վահաններ, լուսավորություն, թույլ հոսանք, տեսահսկում, տաք հատակ և արտակարգ մեկնում։",
+    servicesLabel: "Ուղղություններ",
+    primaryLabel: "Շտապ մեկնում",
+    more: "Մանրամասն",
   },
 } as const;
 
@@ -65,8 +100,10 @@ export function HomeServiceWall({ locale }: { locale: Locale }) {
             </div>
 
             <h2 className="home-service-wall__title">
-              <span className="home-service-wall__title-line">{c.title}</span>
-              <span className="block">{c.subtitle}</span>
+              <span className="home-service-wall__title-line">{c.titleLineOne}</span>
+              <span className="block">
+                {c.titleAccent} {c.titleTail}
+              </span>
             </h2>
 
             <div className="cta-block">
@@ -98,19 +135,74 @@ export function HomeServiceWall({ locale }: { locale: Locale }) {
         <div aria-hidden="true" className="home-service-wall__hazard home-service-wall__hazard--bottom" />
       </div>
 
-      <div className="home-service-wall__services">
-        <p className="home-service-wall__services-label">{c.servicesLabel}</p>
-        <div className="home-service-wall__services-grid">
-          {wallItems.map((item) => (
-            <NavLink
-              key={item.slug}
-              to={servicePath(locale, item.slug)}
-              className="home-service-wall__service-tag"
-            >
-              {item.label[locale]}
-            </NavLink>
-          ))}
+      <div id="uslugi" className="home-service-wall__catalog">
+        <div className="home-service-wall__catalog-head">
+          <div className="home-service-wall__catalog-kicker">
+            <svg className="home-service-wall__catalog-icon" viewBox="0 0 24 24" fill="#ffd500" aria-hidden="true">
+              <path d="M1 21h22L12 2 1 21zm12-3h-2v2h2v-2zm0-8h-2v6h2v-6z" />
+            </svg>
+            <span className="home-service-wall__catalog-eyebrow">
+              {c.eyebrow}
+            </span>
+            <span className="home-service-wall__catalog-hint">
+              · {c.eyebrowHint}
+            </span>
+          </div>
+
+          <h2 className="home-service-wall__catalog-title">
+            {c.heading}
+          </h2>
+          <p className="home-service-wall__catalog-subtitle">{c.subtitle}</p>
         </div>
+
+        <p className="home-service-wall__catalog-label">
+          {c.servicesLabel}
+        </p>
+
+        <ul className="home-service-wall__catalog-grid">
+          {catalogServices.map((service) => {
+            const Icon = serviceIcons[service.slug];
+            const isPrimary = service.slug === primaryServiceSlug;
+            return (
+              <li
+                key={service.slug}
+                className={`home-service-wall__catalog-cell${isPrimary ? " home-service-wall__catalog-cell--primary" : ""}`}
+              >
+                <NavLink
+                  to={servicePath(locale, service.slug)}
+                  className={`home-service-wall__catalog-card electro-icon-trigger${isPrimary ? " home-service-wall__catalog-card--primary" : ""}`}
+                >
+                  <div className="home-service-wall__catalog-card-head">
+                    <div className="home-service-wall__catalog-title-stack">
+                      {isPrimary ? (
+                        <span className="home-service-wall__catalog-card-badge">
+                          {c.primaryLabel}
+                        </span>
+                      ) : null}
+                      <h3 className="home-service-wall__catalog-card-title">
+                        {t(locale, service.title)}
+                      </h3>
+                    </div>
+                    <span aria-hidden="true" className="home-service-wall__catalog-arrow">
+                      →
+                    </span>
+                  </div>
+                  <p className="home-service-wall__catalog-card-text">
+                    {t(locale, service.tagline)}
+                  </p>
+                  {Icon ? (
+                    <span aria-hidden="true" className="home-service-wall__catalog-card-icon">
+                      <Icon />
+                    </span>
+                  ) : null}
+                  <span className="home-service-wall__catalog-more">
+                    {c.more}
+                  </span>
+                </NavLink>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );

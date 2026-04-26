@@ -24,7 +24,7 @@ function readSiteUrl() {
 
 const siteUrl = readSiteUrl();
 const locales = ["ru", "hy"];
-const staticPages = ["uslugi", "o-kompanii", "kontakty"];
+const staticPages = ["o-kompanii", "kontakty"];
 const serviceSlugs = [
   "elektromontazh",
   "elektroshchity-i-avtomatika",

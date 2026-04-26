@@ -17,6 +17,10 @@ export function pagePath(locale: Locale, slug: keyof typeof commonSlugs) {
   return `/${locale}/${commonSlugs[slug]}`;
 }
 
+export function servicesAnchor(locale: Locale) {
+  return `${localePath(locale)}#uslugi`;
+}
+
 export function servicePath(locale: Locale, serviceSlug: string) {
   return `/${locale}/${commonSlugs.services}/${serviceSlug}`;
 }
@@ -61,7 +65,7 @@ export function rewriteLocaleInPath(pathname: string, nextLocale: Locale) {
 export function navigationLinks(locale: Locale) {
   return [
     { label: t(locale, navCopy.home), to: localePath(locale), end: true, hash: "" },
-    { label: t(locale, navCopy.services), to: pagePath(locale, "services"), end: false },
+    { label: t(locale, navCopy.services), to: servicesAnchor(locale), end: true },
     { label: t(locale, navCopy.about), to: pagePath(locale, "about"), end: false },
     { label: t(locale, navCopy.contacts), to: pagePath(locale, "contacts"), end: false },
   ];
