@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "node scripts/generate-sitemap.mjs && tsc -b && vite build",
     "build:pages": "node scripts/generate-sitemap.mjs && tsc -b && vite build --base=/Electro/",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build:pages && npx gh-pages -d dist"
   },
   "dependencies": {
     "framer-motion": "^11.11.17",
