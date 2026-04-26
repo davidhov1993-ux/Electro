@@ -52,9 +52,9 @@ const lightingRuPage = {
   contactLabel: "Связь по задаче",
   contactText: "Можно сразу отправить фото, план или короткое описание объекта.",
   layersLabel: "Слои света",
-  layersTitle: "Освещение работает лучше, когда собрано не одной линией",
+  layersTitle: "Свет делим на группы по задачам",
   layersIntro:
-    "В монтаже важно не только повесить светильник. Нужно разделить свет по задачам: общий, рабочий, акцентный и наружный.",
+    "Не сваливаем всё на один выключатель. Общий свет, рабочий, акцентный и наружный — в разные группы.",
   layers: [
     {
       label: "01",
@@ -131,9 +131,9 @@ const lightingRuPage = {
     "проверяем трассы до отделки, чтобы потом не вскрывать стены и потолок",
   ],
   controlLabel: "Управление",
-  controlTitle: "Свет должен включаться понятно, а не случайно",
+  controlTitle: "Удобное включение и подписанные клавиши",
   controlIntro:
-    "Хороший монтаж освещения виден по тому, как удобно им пользоваться каждый день.",
+    "Чтобы каждая клавиша включала именно тот свет, который ожидаешь.",
   controlItems: [
     {
       title: "Группы света",
@@ -153,7 +153,7 @@ const lightingRuPage = {
     },
   ],
   zonesLabel: "Объекты",
-  zonesTitle: "Один принцип, разные сценарии света",
+  zonesTitle: "Где обычно делаем",
   zones: [
     {
       title: "Квартира и дом",
@@ -169,9 +169,9 @@ const lightingRuPage = {
     },
   ],
   diagnosticsLabel: "Диагностика",
-  diagnosticsTitle: "Когда свет уже работает неправильно",
+  diagnosticsTitle: "Если свет уже не работает как надо",
   diagnosticsIntro:
-    "Диагностику оставляем компактной: это не аварийная страница, а часть услуги по освещению.",
+    "Не аварийный выезд, а штатная диагностика по освещению.",
   diagnostics: [
     "свет не включается или мигает",
     "при включении выбивает автомат",
@@ -713,7 +713,7 @@ function LegacyLightingServicePage({ locale, service }: { locale: "hy"; service:
   const brandLabel = t(locale, brandName);
   const copy = legacyLightingPageCopy[locale];
   const servicePagePath = servicePath(locale, service.slug);
-  const requestPath = `${pagePath(locale, "request")}?service=${service.slug}`;
+  const requestPath = `${pagePath(locale, "contacts")}?service=${service.slug}`;
   const faqSchema = createFaqSchema(locale, service.faq);
 
   return (

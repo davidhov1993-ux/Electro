@@ -63,8 +63,6 @@ export function navigationLinks(locale: Locale) {
     { label: t(locale, navCopy.home), to: localePath(locale), end: true, hash: "" },
     { label: t(locale, navCopy.services), to: pagePath(locale, "services"), end: false },
     { label: t(locale, navCopy.about), to: pagePath(locale, "about"), end: false },
-    { label: t(locale, navCopy.why), to: pagePath(locale, "why"), end: false },
-    { label: t(locale, navCopy.certificates), to: pagePath(locale, "certificates"), end: false },
     { label: t(locale, navCopy.contacts), to: pagePath(locale, "contacts"), end: false },
   ];
 }

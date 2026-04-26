@@ -13,11 +13,10 @@ export type ServiceSlug =
   | "elektrozamki-i-kontrol-dostupa"
   | "umnyi-dom-i-umnaya-tekhnika"
   | "teplyi-pol"
-  | "avariinyi-elektrik"
-  | "slozhnye-proekty-pod-klyuch";
+  | "avariinyi-elektrik";
 
-export type StaticPageKey = "about" | "why" | "certificates" | "contacts" | "request";
-export type InfoPageKey = Exclude<StaticPageKey, "contacts" | "request">;
+export type StaticPageKey = "about" | "contacts";
+export type InfoPageKey = Extract<StaticPageKey, "about">;
 
 export type LocalizedText = Record<Locale, string>;
 export type LocalizedList = Record<Locale, string[]>;

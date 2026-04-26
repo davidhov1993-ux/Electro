@@ -5,7 +5,6 @@ import { LocaleLayout } from "@/src/layout/LocaleLayout";
 import { ContactsPage } from "@/src/pages/ContactsPage";
 import { HomePage } from "@/src/pages/HomePage";
 import { InfoPage } from "@/src/pages/InfoPage";
-import { RequestPage } from "@/src/pages/RequestPage";
 import { ServiceDetailPage } from "@/src/pages/ServiceDetailPage";
 import { ServicesPage } from "@/src/pages/ServicesPage";
 
@@ -16,6 +15,13 @@ function LocalizedHomeRedirect() {
   const locale = params.locale ?? defaultLocale;
 
   return <Navigate to={`/${locale}`} replace />;
+}
+
+function LocaleSlugRedirect({ slug }: { slug: string }) {
+  const params = useParams();
+  const locale = params.locale ?? defaultLocale;
+
+  return <Navigate to={`/${locale}/${slug}`} replace />;
 }
 
 export const router = createBrowserRouter([
@@ -44,20 +50,20 @@ export const router = createBrowserRouter([
         element: <InfoPage pageKey="about" />,
       },
       {
-        path: commonSlugs.why,
-        element: <InfoPage pageKey="why" />,
-      },
-      {
-        path: commonSlugs.certificates,
-        element: <InfoPage pageKey="certificates" />,
-      },
-      {
         path: commonSlugs.contacts,
         element: <ContactsPage />,
       },
       {
-        path: commonSlugs.request,
-        element: <RequestPage />,
+        path: "pochemu-vybirayut-nas",
+        element: <LocaleSlugRedirect slug={commonSlugs.about} />,
+      },
+      {
+        path: "sertifikaty",
+        element: <LocaleSlugRedirect slug={commonSlugs.about} />,
+      },
+      {
+        path: "zayavka",
+        element: <LocaleSlugRedirect slug={commonSlugs.contacts} />,
       },
       {
         path: "*",

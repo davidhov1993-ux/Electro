@@ -24,11 +24,9 @@ function readSiteUrl() {
 
 const siteUrl = readSiteUrl();
 const locales = ["ru", "hy"];
-const staticPages = ["uslugi", "o-kompanii", "pochemu-vybirayut-nas", "sertifikaty", "kontakty", "zayavka"];
+const staticPages = ["uslugi", "o-kompanii", "kontakty"];
 const serviceSlugs = [
   "elektromontazh",
-  "220v",
-  "380v",
   "elektroshchity-i-avtomatika",
   "osveshchenie",
   "slabotochnye-sistemy",
@@ -37,7 +35,6 @@ const serviceSlugs = [
   "umnyi-dom-i-umnaya-tekhnika",
   "teplyi-pol",
   "avariinyi-elektrik",
-  "slozhnye-proekty-pod-klyuch",
 ];
 
 const urls = locales.flatMap((locale) => {

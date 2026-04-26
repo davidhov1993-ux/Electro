@@ -3,48 +3,42 @@ import { NavLink } from "react-router-dom";
 import { servicePath } from "@/src/lib/locale";
 import type { Locale } from "@/src/types";
 
-const seoWallItems = [
-  { slug: "avariinyi-elektrik",             label: { ru: "Аварийный электрик",   hy: "Արտակարգ էլեկտրիկ" } },
+const wallItems = [
+  { slug: "avariinyi-elektrik",             label: { ru: "Аварийный выезд",      hy: "Արտակարգ մեկնում" } },
   { slug: "elektromontazh",                 label: { ru: "Электромонтаж",        hy: "Էլեկտրամոնտաժ" } },
+  { slug: "elektroshchity-i-avtomatika",    label: { ru: "Щиты и автоматика",    hy: "Վահաններ" } },
   { slug: "osveshchenie",                   label: { ru: "Освещение",            hy: "Լուսավորություն" } },
   { slug: "videonablyudenie",               label: { ru: "Видеонаблюдение",      hy: "Տեսահսկում" } },
-  { slug: "slabotochnye-sistemy",           label: { ru: "Слаботочные системы",  hy: "Թույլ հոսանքային համակարգեր" } },
-  { slug: "elektrozamki-i-kontrol-dostupa", label: { ru: "Безопасность",         hy: "Անվտանգություն" } },
+  { slug: "elektrozamki-i-kontrol-dostupa", label: { ru: "Замки и домофоны",     hy: "Կողպեքներ և դոմոֆոններ" } },
+  { slug: "slabotochnye-sistemy",           label: { ru: "Слаботочка",           hy: "Թույլ հոսանք" } },
   { slug: "teplyi-pol",                     label: { ru: "Тёплый пол",           hy: "Տաք հատակ" } },
-  { slug: "umnyi-dom-i-umnaya-tekhnika",    label: { ru: "Автоматизация",        hy: "Ավտոմատացում" } },
-  { slug: "elektromontazh",                 label: { ru: "Ремонт",               hy: "Վերանորոգում" } },
-  { slug: "avariinyi-elektrik",             label: { ru: "Диагностика",          hy: "Ախտորոշում" } },
-  { slug: "slozhnye-proekty-pod-klyuch",    label: { ru: "Проектирование",       hy: "Նախագծում" } },
   { slug: "umnyi-dom-i-umnaya-tekhnika",    label: { ru: "Умный дом",            hy: "Խելացի տուն" } },
-  { slug: "slozhnye-proekty-pod-klyuch",    label: { ru: "Солнечные панели",     hy: "Արևային պանելներ" } },
 ] as const;
 
 const content = {
   ru: {
-    attention: "ВНИМАНИЕ",
-    attentionHint: "Оперативная связь и выезд",
-    titleLineOne: "НУЖНО РЕШИТЬ",
-    titleAccent: "ВОПРОС",
-    titleTail: "С ЭЛЕКТРИКОЙ?",
-    triggerLabel: "Для бесплатной консультации — звоните",
+    attention: "ВЫЗОВ",
+    attentionHint: "Звонок и выезд по Еревану",
+    title: "Нужен электрик?",
+    subtitle: "Опишите задачу — посчитаем и приедем.",
+    triggerLabel: "Звонок без скрытых платежей",
     phone: "+374 99 586 469",
     phoneLabel: "Позвонить",
     whatsappLabel: "WhatsApp",
-    sectionLabel: "SEO блок с услугами электрика в Ереване",
-    servicesLabel: "Ключевые направления",
+    sectionLabel: "Услуги электрика в Ереване",
+    servicesLabel: "Чем занимаемся",
   },
   hy: {
-    attention: "ՈՒՇԱԴՐՈՒԹՅՈՒՆ",
-    attentionHint: "Արագ կապ և մեկնում",
-    titleLineOne: "ՊԵՏՔ Է ԼՈՒԾԵԼ",
-    titleAccent: "ՀԱՐՑԸ",
-    titleTail: "ԷԼԵԿՏՐԻԿԱՅԻ՞",
-    triggerLabel: "Անվճար խորհրդատվության համար զանգահարեք",
+    attention: "ԿԱՆՉ",
+    attentionHint: "Զանգ և մեկնում Երևանում",
+    title: "Պետք է էլեկտրիկ։",
+    subtitle: "Նկարագրեք խնդիրը՝ կհաշվարկենք և կգանք։",
+    triggerLabel: "Զանգ՝ առանց թաքնված վճարների",
     phone: "+374 99 586 469",
     phoneLabel: "Զանգահարել",
     whatsappLabel: "WhatsApp",
-    sectionLabel: "Էլեկտրիկի SEO բլոկ Երևանում",
-    servicesLabel: "Հիմնական ուղղություններ",
+    sectionLabel: "Էլեկտրիկի ծառայություններ Երևանում",
+    servicesLabel: "Ինչով ենք զբաղվում",
   },
 } as const;
 
@@ -71,10 +65,8 @@ export function HomeServiceWall({ locale }: { locale: Locale }) {
             </div>
 
             <h2 className="home-service-wall__title">
-              <span className="home-service-wall__title-line">
-                {c.titleLineOne} {c.titleAccent}
-              </span>
-              <span className="block">{c.titleTail}</span>
+              <span className="home-service-wall__title-line">{c.title}</span>
+              <span className="block">{c.subtitle}</span>
             </h2>
 
             <div className="cta-block">
@@ -109,9 +101,9 @@ export function HomeServiceWall({ locale }: { locale: Locale }) {
       <div className="home-service-wall__services">
         <p className="home-service-wall__services-label">{c.servicesLabel}</p>
         <div className="home-service-wall__services-grid">
-          {seoWallItems.map((item) => (
+          {wallItems.map((item) => (
             <NavLink
-              key={`${locale}-${item.label.ru}`}
+              key={item.slug}
               to={servicePath(locale, item.slug)}
               className="home-service-wall__service-tag"
             >

@@ -1,6 +1,6 @@
 import { NavLink, useParams } from "react-router-dom";
 
-import { brandName, getRelatedServices, getService, processSteps, t, uiCopy } from "@/src/content/site";
+import { brandName, getRelatedServices, getService, t, uiCopy } from "@/src/content/site";
 import { EmergencyServicePage } from "@/src/components/EmergencyServicePage";
 import { InstallationServicePage } from "@/src/components/InstallationServicePage";
 import { LightingServicePage } from "@/src/components/LightingServicePage";
@@ -44,7 +44,7 @@ export function ServiceDetailPage() {
 
   const related = getRelatedServices(service.slug, service.group);
   const media = getServiceMedia(service.slug);
-  const requestBasePath = pagePath(locale, "request");
+  const requestBasePath = pagePath(locale, "contacts");
   const requestPath = `${requestBasePath}?service=${service.slug}`;
   const servicePagePath = servicePath(locale, service.slug);
   const faqSchema = createFaqSchema(locale, service.faq);
@@ -128,9 +128,8 @@ export function ServiceDetailPage() {
 
       <Section
         layout="wide"
-        eyebrow={locale === "ru" ? "Сигналы" : "Սիգնալներ"}
+        eyebrow={locale === "ru" ? "Сценарии" : "Սցենարներ"}
         title={t(locale, uiCopy.whenNeeded)}
-        intro={locale === "ru" ? "Типовые сценарии, в которых это направление действительно нужно." : "Տիպիկ սցենարներ, երբ այս ուղղությունը իրականում պետք է։"}
       >
         <div className="signal-grid">
           {service.problems[locale].map((item) => (
@@ -146,7 +145,6 @@ export function ServiceDetailPage() {
         layout="wide"
         eyebrow={locale === "ru" ? "Состав работ" : "Աշխատանքների կազմ"}
         title={t(locale, uiCopy.whatIncluded)}
-        intro={locale === "ru" ? "База работ и логика реализации по этому направлению." : "Աշխատանքների հիմքը և իրականացման տրամաբանությունն այս ուղղության համար։"}
       >
         <div className="scope-columns">
           <article className="scope-columns__item">
@@ -172,26 +170,9 @@ export function ServiceDetailPage() {
       </Section>
 
       <Section
-        layout="wide"
-        eyebrow={locale === "ru" ? "Процесс" : "Գործընթաց"}
-        title={locale === "ru" ? "Как проходит работа" : "Ինչպես է անցնում աշխատանքը"}
-        intro={locale === "ru" ? "На любой услуге процесс остаётся прозрачным и управляемым." : "Ցանկացած ծառայության դեպքում գործընթացը մնում է թափանցիկ և վերահսկելի։"}
-      >
-        <div className="timeline">
-          {processSteps[locale].map((step, index) => (
-            <article key={step} className="timeline__item">
-              <span className="timeline__index">{String(index + 1).padStart(2, "0")}</span>
-              <p>{step}</p>
-            </article>
-          ))}
-        </div>
-      </Section>
-
-      <Section
         layout="narrow"
         eyebrow="FAQ"
         title={locale === "ru" ? "Частые вопросы" : "Հաճախ տրվող հարցեր"}
-        intro={locale === "ru" ? "Коротко отвечаем на вопросы, которые чаще всего возникают до старта работ." : "Կարճ պատասխանում ենք հարցերին, որոնք ամենից հաճախ առաջանում են մինչև աշխատանքների մեկնարկը։"}
       >
         <div className="faq-list">
           {service.faq.map((item) => (
@@ -205,9 +186,8 @@ export function ServiceDetailPage() {
 
       <Section
         layout="wide"
-        eyebrow={locale === "ru" ? "Связанные страницы" : "Կապված էջեր"}
+        eyebrow={locale === "ru" ? "Связанные услуги" : "Կապված ծառայություններ"}
         title={t(locale, uiCopy.relatedServices)}
-        intro={locale === "ru" ? "Направления, которые чаще всего идут рядом с этой услугой." : "Ուղղություններ, որոնք ամենից հաճախ գնում են այս ծառայության հետ միասին։"}
       >
         <div className="related-list">
           {related.map((item) => (
@@ -227,8 +207,7 @@ export function ServiceDetailPage() {
         layout="wide"
         className="section--utility section--detail-form"
         eyebrow={locale === "ru" ? "Заявка" : "Հայտ"}
-        title={locale === "ru" ? "Обсудить задачу по объекту" : "Քննարկել խնդիրը ըստ օբյեկտի"}
-        intro={locale === "ru" ? "Короткая форма для консультации или выезда. Для аварийной ситуации направление подставляется автоматически." : "Կարճ ձև խորհրդատվության կամ մեկնելու համար։ Արտակարգ սցենարի դեպքում ուղղությունը դրվում է ավտոմատ։"}
+        title={locale === "ru" ? "Оставить заявку" : "Թողնել հայտ"}
       >
         <div className="utility-shell utility-shell--form-first">
           <div className="utility-shell__form">

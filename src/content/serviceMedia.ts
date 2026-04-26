@@ -104,15 +104,6 @@ export const serviceMedia: Record<ServiceSlug, ServiceMediaEntry> = {
     badge: { ru: "Красный канал", hy: "Կարմիր ալիք" },
     signal: { ru: "SOS / выезд / локализация", hy: "SOS / մեկնում / տեղորոշում" },
   },
-  "slozhnye-proekty-pod-klyuch": {
-    image: sceneAssetLibrary.intercom,
-    alt: {
-      ru: "Домофон как часть интегрированной инженерной системы",
-      hy: "Դոմոֆոն՝ որպես ինտեգրված ինժեներական համակարգի մաս",
-    },
-    badge: { ru: "Комплексная интеграция", hy: "Համալիր ինտեգրում" },
-    signal: { ru: "Системы / координация / запуск", hy: "Համակարգեր / համակարգում / գործարկում" },
-  },
 };
 
 export function getServiceMedia(slug?: string): ServiceMediaEntry {
