@@ -1,6 +1,8 @@
 import type { ChangeEvent, FormEvent } from "react";
 import { useId, useState } from "react";
+import { Link } from "react-router-dom";
 
+import { pagePath } from "@/src/lib/locale";
 import type { Locale } from "@/src/types";
 
 interface LeadFormProps {
@@ -47,6 +49,10 @@ const leadFormCopy = {
     hint: "Можно сразу отправить запрос и файлы по задаче.",
     success: "Поля заполнены корректно. Следующим шагом сюда можно подключить реальную отправку заявки.",
     fixErrors: "Заполните имя, телефон, email и сообщение, чтобы отправить обращение.",
+    privacyPrefix: "Нажимая кнопку, вы соглашаетесь с",
+    privacyLink: "Политикой конфиденциальности",
+    privacySuffix: ".",
+    invalidPrivacy: "Подтвердите согласие с Политикой конфиденциальности.",
     invalidName: "Укажите имя.",
     invalidPhone: "Укажите телефон.",
     invalidEmail: "Укажите корректный email.",
@@ -68,6 +74,10 @@ const leadFormCopy = {
     hint: "Կարելի է անմիջապես ուղարկել հարցումը և առաջադրանքի ֆայլերը։",
     success: "Դաշտերը ճիշտ են լրացված։ Հաջորդ քայլով այստեղ կարելի է միացնել հայտի իրական ուղարկումը։",
     fixErrors: "Լրացրեք անունը, հեռախոսը, email-ը և հաղորդագրությունը, որպեսզի դիմումն ուղարկվի։",
+    privacyPrefix: "Սեղմելով կոճակը՝ Դուք համաձայնում եք",
+    privacyLink: "Գաղտնիության քաղաքականությանը",
+    privacySuffix: ":",
+    invalidPrivacy: "Հաստատեք համաձայնությունը Գաղտնիության քաղաքականության հետ:",
     invalidName: "Նշեք անունը։",
     invalidPhone: "Նշեք հեռախոսահամարը։",
     invalidEmail: "Նշեք ճիշտ email։",
@@ -115,11 +125,14 @@ export function LeadForm({
   attachmentsEnabled = false,
 }: LeadFormProps) {
   const formId = useId();
+  const privacyInputId = `${formId}-privacy`;
   const copy = leadFormCopy[locale];
   const [values, setValues] = useState<LeadFormState>(() => createInitialState());
   const [errors, setErrors] = useState<LeadFormErrors>({});
   const [status, setStatus] = useState<LeadFormStatus>("idle");
   const [attachmentNames, setAttachmentNames] = useState<string[]>([]);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [privacyError, setPrivacyError] = useState("");
 
   const note =
     status === "validated" ? copy.success : status === "error" ? copy.fixErrors : copy.hint;
@@ -144,6 +157,10 @@ export function LeadForm({
     if (status !== "idle") {
       setStatus("idle");
     }
+
+    if (privacyError) {
+      setPrivacyError("");
+    }
   };
 
   const handleAttachmentsChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -160,8 +177,10 @@ export function LeadForm({
 
     const nextErrors = validateForm(locale, values);
     setErrors(nextErrors);
+    const hasPrivacyError = !privacyAccepted;
+    setPrivacyError(hasPrivacyError ? copy.invalidPrivacy : "");
 
-    if (Object.keys(nextErrors).length > 0) {
+    if (Object.keys(nextErrors).length > 0 || hasPrivacyError) {
       setStatus("error");
       return;
     }
@@ -296,6 +315,28 @@ export function LeadForm({
         <button type="submit" className="button button--primary">
           {copy.submit}
         </button>
+        <label className="form-consent" htmlFor={privacyInputId}>
+          <input
+            id={privacyInputId}
+            type="checkbox"
+            checked={privacyAccepted}
+            onChange={(event) => {
+              setPrivacyAccepted(event.target.checked);
+              setPrivacyError("");
+              if (status !== "idle") setStatus("idle");
+            }}
+            required
+          />
+          <span>
+            {copy.privacyPrefix} <Link to={pagePath(locale, "privacy")}>{copy.privacyLink}</Link>
+            {copy.privacySuffix}
+          </span>
+        </label>
+        {privacyError ? (
+          <span className="form-error" role="alert">
+            {privacyError}
+          </span>
+        ) : null}
         <p
           className={`form-note ${status === "validated" ? "form-note--success" : status === "error" ? "form-note--error" : ""}`.trim()}
           role="status"

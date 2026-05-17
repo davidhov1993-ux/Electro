@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { Navigate, Outlet, useLocation, useParams } from "react-router-dom";
 
-import { defaultLocale } from "@/src/content/site";
+import { CookieConsent } from "@/src/components/CookieConsent";
 import { SiteFooter } from "@/src/components/SiteFooter";
 import { SiteHeader } from "@/src/components/SiteHeader";
-import { isLocale } from "@/src/lib/locale";
+import { detectPreferredLocale, isLocale } from "@/src/lib/locale";
 
 export function LocaleLayout() {
   const params = useParams();
@@ -25,8 +25,9 @@ export function LocaleLayout() {
   }, [location.pathname, location.hash, location.key]);
 
   if (!isLocale(params.locale)) {
+    const locale = detectPreferredLocale();
     const segments = location.pathname.split("/").filter(Boolean).slice(1);
-    const nextPath = `/${defaultLocale}${segments.length > 0 ? `/${segments.join("/")}` : ""}${location.search}${location.hash}`;
+    const nextPath = `/${locale}${segments.length > 0 ? `/${segments.join("/")}` : ""}${location.search}${location.hash}`;
 
     return <Navigate to={nextPath} replace />;
   }
@@ -40,6 +41,7 @@ export function LocaleLayout() {
         <Outlet />
       </main>
       <SiteFooter locale={locale} />
+      <CookieConsent locale={locale} />
     </div>
   );
 }

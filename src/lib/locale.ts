@@ -1,15 +1,14 @@
 import {
   commonSlugs,
   defaultLocale,
-  getService,
-  getPublicServiceSlug,
   localeNames,
-  navCopy,
   siteUrl,
   supportedLocales,
-  t,
 } from "@/src/content/site";
 import type { Locale } from "@/src/types";
+
+const localePreferenceStorageKey = "electro_locale_preference";
+const geographicFallbackLocale: Locale = "hy";
 
 export function isLocale(value?: string): value is Locale {
   return supportedLocales.includes(value as Locale);
@@ -19,57 +18,66 @@ export function normalizeLocale(value?: string): Locale {
   return isLocale(value) ? value : defaultLocale;
 }
 
+export function getStoredLocalePreference(): Locale | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const value = window.localStorage.getItem(localePreferenceStorageKey);
+    return value && isLocale(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveLocalePreference(locale: Locale) {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(localePreferenceStorageKey, locale);
+  } catch {
+    // Locale detection still works from browser settings if storage is blocked.
+  }
+}
+
+export function detectPreferredLocale() {
+  const storedLocale = getStoredLocalePreference();
+  if (storedLocale) return storedLocale;
+
+  const systemLocale = detectSystemLocale();
+  return systemLocale ?? geographicFallbackLocale;
+}
+
+export function detectSystemLocale(): Locale | null {
+  if (typeof window === "undefined") return null;
+
+  const browserNavigator = window.navigator as Navigator & {
+    browserLanguage?: string;
+    userLanguage?: string;
+  };
+
+  const candidates = [
+    ...(browserNavigator.languages ?? []),
+    browserNavigator.language,
+    browserNavigator.userLanguage,
+    browserNavigator.browserLanguage,
+    getIntlLocale(),
+    getTimeZoneLocale(),
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    const locale = localeFromLanguageTag(candidate);
+    if (locale) return locale;
+  }
+
+  return null;
+}
+
 export function localePath(locale: Locale, suffix = "") {
   return `/${locale}${suffix}`;
 }
 
 export function pagePath(locale: Locale, slug: keyof typeof commonSlugs) {
   return `/${locale}/${commonSlugs[slug]}`;
-}
-
-export function servicesAnchor(locale: Locale) {
-  return `${localePath(locale)}#uslugi`;
-}
-
-export function trustAnchor(locale: Locale) {
-  return `${localePath(locale)}#doverie`;
-}
-
-export function contactAnchor(locale: Locale) {
-  return `${localePath(locale)}#svyaz`;
-}
-
-export function workAnchor(locale: Locale) {
-  return `${localePath(locale)}#raboty`;
-}
-
-export function emergencyAnchor(locale: Locale) {
-  return `${localePath(locale)}#avariinyi-vyezd`;
-}
-
-export function servicePath(locale: Locale, serviceSlug: string) {
-  const publicSlug = getPublicServiceSlug(locale, serviceSlug);
-  return publicSlug === serviceSlug
-    ? `/${locale}/${commonSlugs.services}/${serviceSlug}`
-    : `/${locale}/${publicSlug}`;
-}
-
-export function serviceLeadPath(locale: Locale, serviceSlug: string) {
-  if (locale === "ru") {
-    return serviceSlug === "avariinyi-elektrik" ? emergencyAnchor(locale) : workAnchor(locale);
-  }
-
-  return servicePath(locale, serviceSlug);
-}
-
-export function serviceAlternatePaths(serviceSlug: string) {
-  return supportedLocales.reduce(
-    (paths, locale) => {
-      paths[locale] = servicePath(locale, serviceSlug);
-      return paths;
-    },
-    {} as Record<Locale, string>,
-  );
 }
 
 export function absoluteUrl(path: string) {
@@ -102,19 +110,6 @@ export function rewriteLocaleInPath(pathname: string, nextLocale: Locale) {
   }
 
   if (isLocale(segments[0])) {
-    const serviceFromCollection = segments[1] === commonSlugs.services && segments[2]
-      ? getService(segments[2])
-      : undefined;
-    const serviceFromTopLevel = segments.length === 2 ? getService(segments[1]) : undefined;
-
-    if (serviceFromCollection) {
-      return `${servicePath(nextLocale, serviceFromCollection.slug)}${search}${hash}`;
-    }
-
-    if (serviceFromTopLevel) {
-      return `${servicePath(nextLocale, serviceFromTopLevel.slug)}${search}${hash}`;
-    }
-
     segments[0] = nextLocale;
     return `/${segments.join("/")}${search}${hash}`;
   }
@@ -122,11 +117,31 @@ export function rewriteLocaleInPath(pathname: string, nextLocale: Locale) {
   return `/${nextLocale}/${segments.join("/")}${search}${hash}`;
 }
 
-export function navigationLinks(locale: Locale) {
-  return [
-    { label: t(locale, navCopy.home), to: localePath(locale), end: true, hash: "" },
-    { label: t(locale, navCopy.services), to: servicesAnchor(locale), end: true },
-    { label: t(locale, navCopy.about), to: locale === "ru" ? trustAnchor(locale) : pagePath(locale, "about"), end: true },
-    { label: t(locale, navCopy.contacts), to: locale === "ru" ? contactAnchor(locale) : pagePath(locale, "contacts"), end: true },
-  ];
+function localeFromLanguageTag(value?: string): Locale | null {
+  const normalized = value?.trim().toLowerCase().replace(/_/g, "-");
+  if (!normalized) return null;
+
+  const [language, region] = normalized.split("-");
+
+  if (language === "ru") return "ru";
+  if (language === "hy") return "hy";
+  if (region === "am") return "hy";
+
+  return null;
+}
+
+function getIntlLocale() {
+  try {
+    return new Intl.DateTimeFormat().resolvedOptions().locale;
+  } catch {
+    return undefined;
+  }
+}
+
+function getTimeZoneLocale() {
+  try {
+    return new Intl.DateTimeFormat().resolvedOptions().timeZone === "Asia/Yerevan" ? "hy-AM" : undefined;
+  } catch {
+    return undefined;
+  }
 }

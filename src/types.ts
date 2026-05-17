@@ -15,8 +15,7 @@ export type ServiceSlug =
   | "teplyi-pol"
   | "avariinyi-elektrik";
 
-export type StaticPageKey = "about" | "contacts";
-export type InfoPageKey = Extract<StaticPageKey, "about">;
+export type StaticPageKey = "privacy";
 
 export type LocalizedText = Record<Locale, string>;
 export type LocalizedList = Record<Locale, string[]>;

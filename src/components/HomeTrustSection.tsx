@@ -1,6 +1,8 @@
 import type { ChangeEvent, DragEvent, FormEvent } from "react";
 import { useId, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
+import { pagePath } from "@/src/lib/locale";
 import type { Locale } from "@/src/types";
 
 type FormStatus = "idle" | "error" | "success";
@@ -62,6 +64,9 @@ interface TrustCopy {
   formFilesHint: string;
   formFilesDrag: string;
   formSubmit: string;
+  formPrivacyPrefix: string;
+  formPrivacyLink: string;
+  formPrivacySuffix: string;
   statusRequired: string;
   statusInvalidEmail: string;
   statusSuccess: string;
@@ -157,8 +162,8 @@ const trustContent: Record<Locale, TrustCopy> = {
       },
     ],
     contactEyebrow: "Связь",
-    contactTitle: "Срочно? Звоните сразу.",
-    contactBody: "Если есть фото щита, автомата или проблемного места, отправьте в WhatsApp.",
+    contactTitle: "Есть материалы по объекту? Прикрепите к заявке.",
+    contactBody: "Если есть чертежи, схемы, документы или фотографии по объекту, прикрепите их к заявке — так будет проще быстро оценить задачу.",
     formNameLabel: "Имя",
     formNamePlaceholder: "Ваше имя",
     formPhoneLabel: "Телефон",
@@ -172,7 +177,10 @@ const trustContent: Record<Locale, TrustCopy> = {
     formFilesHint: "Фото, видео, PDF, Word, Excel.",
     formFilesDrag: "Необязательно.",
     formSubmit: "Отправить заявку",
-    statusRequired: "Оставьте имя, телефон и коротко опишите задачу.",
+    formPrivacyPrefix: "Нажимая кнопку, вы соглашаетесь с",
+    formPrivacyLink: "Политикой конфиденциальности",
+    formPrivacySuffix: ".",
+    statusRequired: "Оставьте имя, телефон, коротко опишите задачу и подтвердите согласие с Политикой конфиденциальности.",
     statusInvalidEmail: "Проверьте email или оставьте это поле пустым.",
     statusSuccess: "Форма заполнена. Если срочно, лучше сразу позвонить.",
   },
@@ -259,8 +267,8 @@ const trustContent: Record<Locale, TrustCopy> = {
       },
     ],
     contactEyebrow: "Կապ",
-    contactTitle: "Շտա՞պ է: Զանգահարեք անմիջապես:",
-    contactBody: "Եթե ունեք վահանակի, ավտոմատի կամ խնդրահարույց հատվածի լուսանկար, ուղարկեք WhatsApp-ին:",
+    contactTitle: "Օբյեկտի նյութեր ունե՞ք։ Կցեք հայտին։",
+    contactBody: "Եթե ունեք գծագրեր, սխեմաներ, փաստաթղթեր կամ օբյեկտի լուսանկարներ, կցեք դրանք հայտին․ այդպես ավելի արագ կհասկանանք խնդիրը:",
     formNameLabel: "Անուն",
     formNamePlaceholder: "Ձեր անունը",
     formPhoneLabel: "Հեռախոսահամար",
@@ -274,7 +282,10 @@ const trustContent: Record<Locale, TrustCopy> = {
     formFilesHint: "Լուսանկար, տեսանյութ, PDF, Word, Excel:",
     formFilesDrag: "Պարտադիր չէ:",
     formSubmit: "Ուղարկել հայտը",
-    statusRequired: "Լրացրեք Ձեր անունը, հեռախոսահամարը և հակիրճ նկարագրեք խնդիրը:",
+    formPrivacyPrefix: "Սեղմելով կոճակը՝ Դուք համաձայնում եք",
+    formPrivacyLink: "Գաղտնիության քաղաքականությանը",
+    formPrivacySuffix: ":",
+    statusRequired: "Լրացրեք Ձեր անունը, հեռախոսահամարը, հակիրճ նկարագրեք խնդիրը և հաստատեք համաձայնությունը Գաղտնիության քաղաքականության հետ:",
     statusInvalidEmail: "Ստուգեք էլ. փոստի հասցեն կամ թողեք այս դաշտը դատարկ:",
     statusSuccess: "Հայտը հաջողությամբ լրացված է: Եթե հարցը շտապ է, ավելի լավ է միանգամից զանգահարել:",
   },
@@ -299,6 +310,7 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
   const emailId = useId();
   const messageId = useId();
   const fileId = useId();
+  const privacyId = useId();
   const dragDepth = useRef(0);
   const [values, setValues] = useState<FormState>({
     name: "",
@@ -310,6 +322,7 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [statusMessage, setStatusMessage] = useState("");
   const [dragActive, setDragActive] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
 
   const resetStatus = () => {
     if (status !== "idle") {
@@ -377,7 +390,8 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
     const hasRequiredFields =
       values.name.trim().length >= 2 &&
       phoneDigits.length >= 7 &&
-      values.message.trim().length >= 8;
+      values.message.trim().length >= 8 &&
+      privacyAccepted;
     const hasEmail = values.email.trim().length > 0;
 
     if (!hasRequiredFields) {
@@ -584,6 +598,22 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
                 <button type="submit" className="home-trust-form__submit">
                   {copy.formSubmit}
                 </button>
+                <label className="home-trust-form__consent" htmlFor={privacyId}>
+                  <input
+                    id={privacyId}
+                    type="checkbox"
+                    checked={privacyAccepted}
+                    onChange={(event) => {
+                      setPrivacyAccepted(event.target.checked);
+                      resetStatus();
+                    }}
+                    required
+                  />
+                  <span>
+                    {copy.formPrivacyPrefix} <Link to={pagePath(locale, "privacy")}>{copy.formPrivacyLink}</Link>
+                    {copy.formPrivacySuffix}
+                  </span>
+                </label>
 
                 {status === "error" ? (
                   <p className="home-trust-form__note" role="status" aria-live="polite">

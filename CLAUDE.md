@@ -16,25 +16,23 @@ There is no test runner, ESLint, or Prettier configured. Type errors from `tsc -
 
 `VITE_SITE_URL` (e.g. `https://example.com`) is read both at runtime (for canonical URLs / OG / hreflang in `src/lib/seo.ts` and `src/components/Seo.tsx`) and at build time by `scripts/generate-sitemap.mjs`. Without it, `siteUrl` is `null` at runtime and absolute URLs fall back to `window.location.origin`; the sitemap script falls back to `https://example.com`. Set it before building for production.
 
+`VITE_GA_MEASUREMENT_ID` enables Google Analytics 4 through the consent manager in `src/components/CookieConsent.tsx` and `src/lib/analytics.ts`. `VITE_GA_CONSENT_MODE` defaults to `advanced`, which loads gtag with Consent Mode v2 defaults set to denied; set it to `basic` if no Google request should be made before consent.
+
 ## Architecture
 
-Single-page React 18 + TypeScript + Vite app. Two locales: `ru` (default) and `hy`. No backend — the lead form in `src/components/LeadForm.tsx` is UI-only and explicitly waiting for a CRM/Telegram/email integration (see `uiCopy.formHint` in `src/content/site.ts`).
+Single-page React 18 + TypeScript + Vite app. Two locales: `ru` (default) and `hy`. No backend — the lead forms are UI-only and explicitly waiting for a CRM/Telegram/email integration.
 
 ### Routing & locale
 
-- All routes live under `/:locale/...` (`src/router.tsx`). `/` redirects to `/ru`. Unknown top-level segments fall through to `*` and redirect to the default-locale home.
+- Active routes are `/:locale` and `/:locale/politika-konfidentsialnosti` (`src/router.tsx`). `/` redirects to `/ru`. Unknown locale child routes fall through to the locale home.
 - `LocaleLayout` (`src/layout/LocaleLayout.tsx`) guards the locale param: if it isn't in `supportedLocales`, the path is rewritten so the first segment becomes `defaultLocale` and the rest of the path is preserved.
-- Page slugs are Russian-transliterated and shared across both locales (`commonSlugs` in `src/content/site.ts`: `uslugi`, `o-kompanii`, `pochemu-vybirayut-nas`, `sertifikaty`, `kontakty`, `zayavka`). When adding a new page, add it to `commonSlugs` and to `scripts/generate-sitemap.mjs`'s `staticPages` array — the sitemap is generated from a hardcoded list, not from the router.
-- Use the helpers in `src/lib/locale.ts` (`pagePath`, `servicePath`, `localePath`, `rewriteLocaleInPath`) rather than building locale-prefixed URLs by hand.
+- The public site is intentionally one-page. Do not reintroduce top navigation pages for services/about/contacts unless the product direction changes.
+- Use the helpers in `src/lib/locale.ts` (`pagePath`, `localePath`, `rewriteLocaleInPath`) rather than building locale-prefixed URLs by hand.
 - `usePageLocale()` (`src/hooks/usePageLocale.ts`) is the standard way for a page component to read the current locale.
 
 ### Content model
 
-`src/content/site.ts` is the single source of truth for site copy and the service catalog. It exports localized text (`LocalizedText = Record<Locale, string>`), nav/UI strings, page panels, and the full `services: ServiceEntry[]` array typed by `src/types.ts`. The `t(locale, value)` helper resolves a `LocalizedText` object to a string — prefer it over inline `value[locale]` access.
-
-Service slugs are a closed union (`ServiceSlug` in `src/types.ts`). To add a service: extend the `ServiceSlug` union, add the entry to `services`, add the slug to `scripts/generate-sitemap.mjs`, and (if it needs a custom layout) wire a branch in `src/pages/ServiceDetailPage.tsx`.
-
-`ServiceDetailPage` dispatches to bespoke per-service components (`EmergencyServicePage`, `InstallationServicePage`, `LightingServicePage`, `VideoSurveillanceServicePage`) by slug — these are full custom layouts, not variants of a shared template. Services without a bespoke component render the generic detail template inline in `ServiceDetailPage`.
+`src/content/site.ts` contains shared localized text and the privacy page metadata. The visible one-page content currently lives mostly in `HomePage`, `HomeServiceWall`, and `HomeTrustSection`. The `t(locale, value)` helper resolves a `LocalizedText` object to a string — prefer it over inline `value[locale]` access.
 
 ### SEO
 

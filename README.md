@@ -15,7 +15,11 @@
 
 ```bash
 VITE_SITE_URL=https://example.com
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+VITE_GA_CONSENT_MODE=advanced
 ```
+
+`VITE_GA_MEASUREMENT_ID` включает Google Analytics 4 через consent banner. `VITE_GA_CONSENT_MODE=advanced` загружает Google tag с default denied и cookieless pings до выбора пользователя; для строгого режима без запросов к Google до согласия используйте `basic`.
 
 См. файл [.env.example](/Users/david/мои проекты/web/Electro/.env.example).
 

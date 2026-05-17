@@ -1,68 +1,31 @@
-import { createBrowserRouter, Navigate, useParams } from "react-router-dom";
+import { createBrowserRouter, Navigate, useLocation, useParams } from "react-router-dom";
 
-import { commonSlugs, defaultLocale, getService } from "@/src/content/site";
+import { commonSlugs } from "@/src/content/site";
 import { LocaleLayout } from "@/src/layout/LocaleLayout";
-import { ContactsPage } from "@/src/pages/ContactsPage";
+import { detectPreferredLocale } from "@/src/lib/locale";
 import { HomePage } from "@/src/pages/HomePage";
-import { InfoPage } from "@/src/pages/InfoPage";
-import { ServiceDetailPage } from "@/src/pages/ServiceDetailPage";
-import { contactAnchor, serviceLeadPath, trustAnchor } from "@/src/lib/locale";
+import { PrivacyPage } from "@/src/pages/PrivacyPage";
 
 const basename = import.meta.env.BASE_URL === "/" ? "/" : import.meta.env.BASE_URL.replace(/\/$/, "");
 
 function LocalizedHomeRedirect() {
   const params = useParams();
-  const locale = params.locale ?? defaultLocale;
+  const locale = params.locale ?? detectPreferredLocale();
 
   return <Navigate to={`/${locale}`} replace />;
 }
 
-function LocalizedServicesRedirect() {
-  const params = useParams();
-  const locale = params.locale ?? defaultLocale;
+function PreferredLocaleRedirect() {
+  const location = useLocation();
+  const locale = detectPreferredLocale();
 
-  return <Navigate to={`/${locale}#uslugi`} replace />;
-}
-
-function LocalizedAboutRoute() {
-  const params = useParams();
-  const locale = params.locale ?? defaultLocale;
-
-  if (locale === "ru") {
-    return <Navigate to={trustAnchor(locale)} replace />;
-  }
-
-  return <InfoPage pageKey="about" />;
-}
-
-function LocalizedContactsRoute() {
-  const params = useParams();
-  const locale = params.locale ?? defaultLocale;
-
-  if (locale === "ru") {
-    return <Navigate to={contactAnchor(locale)} replace />;
-  }
-
-  return <ContactsPage />;
-}
-
-function LocalizedServiceRoute({ serviceSlug }: { serviceSlug?: string }) {
-  const params = useParams();
-  const locale = params.locale ?? defaultLocale;
-  const slug = serviceSlug ?? params.slug;
-  const service = getService(slug);
-
-  if (locale === "ru" && service) {
-    return <Navigate to={serviceLeadPath(locale, service.slug)} replace />;
-  }
-
-  return <ServiceDetailPage serviceSlug={serviceSlug} />;
+  return <Navigate to={`/${locale}${location.search}${location.hash}`} replace />;
 }
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to={`/${defaultLocale}`} replace />,
+    element: <PreferredLocaleRedirect />,
   },
   {
     path: "/:locale",
@@ -73,52 +36,8 @@ export const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: commonSlugs.services,
-        element: <LocalizedServicesRedirect />,
-      },
-      {
-        path: `${commonSlugs.services}/:slug`,
-        element: <LocalizedServiceRoute />,
-      },
-      {
-        path: "elektromontazh-erevan",
-        element: <LocalizedServiceRoute serviceSlug="elektromontazh" />,
-      },
-      {
-        path: "sborka-elektroshitov-erevan",
-        element: <LocalizedServiceRoute serviceSlug="elektroshchity-i-avtomatika" />,
-      },
-      {
-        path: "elektrakan-vahanakner-montazh-erevan",
-        element: <LocalizedServiceRoute serviceSlug="elektroshchity-i-avtomatika" />,
-      },
-      {
-        path: "srochnyi-elektrik-erevan",
-        element: <LocalizedServiceRoute serviceSlug="avariinyi-elektrik" />,
-      },
-      {
-        path: "shtap-elektrik-erevan",
-        element: <LocalizedServiceRoute serviceSlug="avariinyi-elektrik" />,
-      },
-      {
-        path: commonSlugs.about,
-        element: <LocalizedAboutRoute />,
-      },
-      {
-        path: commonSlugs.contacts,
-        element: <LocalizedContactsRoute />,
-      },
-      {
-        path: "pochemu-vybirayut-nas",
-        element: <LocalizedAboutRoute />,
-      },
-      {
-        path: "sertifikaty",
-        element: <LocalizedAboutRoute />,
-      },
-      {
-        path: "zayavka",
-        element: <LocalizedContactsRoute />,
+        path: commonSlugs.privacy,
+        element: <PrivacyPage />,
       },
       {
         path: "*",
@@ -128,6 +47,6 @@ export const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <Navigate to={`/${defaultLocale}`} replace />,
+    element: <PreferredLocaleRedirect />,
   },
 ], { basename });

@@ -1,6 +1,8 @@
 import type { ChangeEvent, DragEvent, FormEvent } from "react";
 import { useId, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
+import { pagePath } from "@/src/lib/locale";
 import type { Locale } from "@/src/types";
 
 type FormStatus = "idle" | "error" | "success";
@@ -36,6 +38,9 @@ interface SectionCopy {
   filesHint: string;
   filesDragHint: string;
   submitLabel: string;
+  privacyPrefix: string;
+  privacyLink: string;
+  privacySuffix: string;
   errorNote: string;
   statusNote: string;
 }
@@ -62,7 +67,10 @@ const content: Record<Locale, SectionCopy> = {
     filesHint: "Форматы: PDF, Word, Excel, PNG, JPG.",
     filesDragHint: "Перетащите файлы или выберите вручную.",
     submitLabel: "Отправить заявку",
-    errorNote: "Заполните имя, телефон, email и сообщение.",
+    privacyPrefix: "Нажимая кнопку, вы соглашаетесь с",
+    privacyLink: "Политикой конфиденциальности",
+    privacySuffix: ".",
+    errorNote: "Заполните имя, телефон, email, сообщение и подтвердите согласие с Политикой конфиденциальности.",
     statusNote:
       "Спасибо. Свяжемся в ближайшее время — обычно отвечаем в течение часа в рабочее время.",
   },
@@ -87,7 +95,10 @@ const content: Record<Locale, SectionCopy> = {
     filesHint: "Ֆորմատներ՝ PDF, Word, Excel, PNG, JPG։",
     filesDragHint: "Քաշեք ֆայլերը կամ ընտրեք ձեռքով։",
     submitLabel: "Ուղարկել հայտը",
-    errorNote: "Լրացրեք անունը, հեռախոսը, email-ը և հաղորդագրությունը։",
+    privacyPrefix: "Սեղմելով կոճակը՝ Դուք համաձայնում եք",
+    privacyLink: "Գաղտնիության քաղաքականությանը",
+    privacySuffix: ":",
+    errorNote: "Լրացրեք անունը, հեռախոսը, email-ը, հաղորդագրությունը և հաստատեք համաձայնությունը Գաղտնիության քաղաքականության հետ:",
     statusNote:
       "Շնորհակալություն։ Շուտով կկապվենք Ձեզ հետ․ սովորաբար պատասխանում ենք մեկ ժամվա ընթացքում աշխատանքային ժամերին։",
   },
@@ -136,6 +147,7 @@ export function HomeObjectsSection({ locale }: { locale: Locale }) {
   const emailId = useId();
   const messageId = useId();
   const fileId = useId();
+  const privacyId = useId();
   const dragDepth = useRef(0);
   const [values, setValues] = useState<FormState>({
     name: "",
@@ -146,6 +158,7 @@ export function HomeObjectsSection({ locale }: { locale: Locale }) {
   const [files, setFiles] = useState<string[]>([]);
   const [status, setStatus] = useState<FormStatus>("idle");
   const [dragActive, setDragActive] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
 
   const resetStatus = () => {
     if (status !== "idle") {
@@ -210,7 +223,8 @@ export function HomeObjectsSection({ locale }: { locale: Locale }) {
       values.name.trim().length >= 2 &&
       phoneDigits.length >= 7 &&
       hasValidEmail(values.email) &&
-      values.message.trim().length >= 10;
+      values.message.trim().length >= 10 &&
+      privacyAccepted;
 
     setStatus(isValid ? "success" : "error");
   };
@@ -336,6 +350,22 @@ export function HomeObjectsSection({ locale }: { locale: Locale }) {
                 <button type="submit" className="home-request-form__submit">
                   {c.submitLabel}
                 </button>
+                <label className="home-request-form__consent" htmlFor={privacyId}>
+                  <input
+                    id={privacyId}
+                    type="checkbox"
+                    checked={privacyAccepted}
+                    onChange={(event) => {
+                      setPrivacyAccepted(event.target.checked);
+                      resetStatus();
+                    }}
+                    required
+                  />
+                  <span>
+                    {c.privacyPrefix} <Link to={pagePath(locale, "privacy")}>{c.privacyLink}</Link>
+                    {c.privacySuffix}
+                  </span>
+                </label>
 
                 {status === "error" ? (
                   <p className="home-request-form__note" role="status" aria-live="polite">

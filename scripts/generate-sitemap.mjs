@@ -24,44 +24,12 @@ function readSiteUrl() {
 
 const siteUrl = readSiteUrl();
 const locales = ["ru", "hy"];
-const staticPages = ["o-kompanii", "kontakty"];
-const serviceSlugs = [
-  "elektromontazh",
-  "elektroshchity-i-avtomatika",
-  "osveshchenie",
-  "slabotochnye-sistemy",
-  "videonablyudenie",
-  "elektrozamki-i-kontrol-dostupa",
-  "umnyi-dom-i-umnaya-tekhnika",
-  "teplyi-pol",
-  "avariinyi-elektrik",
-];
-
-const servicePublicSlugs = {
-  elektromontazh: {
-    ru: "elektromontazh-erevan",
-    hy: "elektromontazh-erevan",
-  },
-  "elektroshchity-i-avtomatika": {
-    ru: "sborka-elektroshitov-erevan",
-    hy: "elektrakan-vahanakner-montazh-erevan",
-  },
-  "avariinyi-elektrik": {
-    ru: "srochnyi-elektrik-erevan",
-    hy: "shtap-elektrik-erevan",
-  },
-};
-
-function servicePath(locale, slug) {
-  const publicSlug = servicePublicSlugs[slug]?.[locale];
-  return publicSlug ? `/${locale}/${publicSlug}` : `/${locale}/uslugi/${slug}`;
-}
+const staticPages = ["politika-konfidentsialnosti"];
 
 const urls = locales.flatMap((locale) => {
   const localeRoot = `${siteUrl}/${locale}`;
   const pageUrls = staticPages.map((slug) => `${localeRoot}/${slug}`);
-  const serviceUrls = serviceSlugs.map((slug) => `${siteUrl}${servicePath(locale, slug)}`);
-  return [localeRoot, ...pageUrls, ...serviceUrls];
+  return [localeRoot, ...pageUrls];
 });
 
 const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
