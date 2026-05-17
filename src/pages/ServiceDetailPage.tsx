@@ -4,6 +4,7 @@ import { brandName, getRelatedServices, getService, t, uiCopy } from "@/src/cont
 import { EmergencyServicePage } from "@/src/components/EmergencyServicePage";
 import { InstallationServicePage } from "@/src/components/InstallationServicePage";
 import { LightingServicePage } from "@/src/components/LightingServicePage";
+import { PanelAutomationServicePage } from "@/src/components/PanelAutomationServicePage";
 import { VideoSurveillanceServicePage } from "@/src/components/VideoSurveillanceServicePage";
 import { getServiceMedia } from "@/src/content/serviceMedia";
 import { LeadForm } from "@/src/components/LeadForm";
@@ -16,11 +17,15 @@ import { createBreadcrumbSchema, createFaqSchema, createServiceSchema } from "@/
 import { NotFoundPage } from "@/src/pages/NotFoundPage";
 import { pagePath, servicePath, servicesAnchor } from "@/src/lib/locale";
 
-export function ServiceDetailPage() {
+interface ServiceDetailPageProps {
+  serviceSlug?: string;
+}
+
+export function ServiceDetailPage({ serviceSlug }: ServiceDetailPageProps = {}) {
   const params = useParams();
   const locale = usePageLocale();
   const brandLabel = t(locale, brandName);
-  const service = getService(params.slug);
+  const service = getService(serviceSlug ?? params.slug);
 
   if (!service) {
     return <NotFoundPage locale={locale} />;
@@ -32,6 +37,10 @@ export function ServiceDetailPage() {
 
   if (service.slug === "elektromontazh") {
     return <InstallationServicePage locale={locale} service={service} />;
+  }
+
+  if (service.slug === "elektroshchity-i-avtomatika") {
+    return <PanelAutomationServicePage locale={locale} service={service} />;
   }
 
   if (service.slug === "osveshchenie") {

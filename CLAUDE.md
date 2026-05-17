@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run dev` — Vite dev server on `0.0.0.0:4157`.
 - `npm run build` — generates `public/sitemap.xml` + `public/robots.txt`, runs `tsc -b`, then `vite build`. The TypeScript step is real type-checking — there is no separate lint/test setup.
 - `npm run build:pages` — same as `build`, but with `--base=/Electro/` for GitHub Pages deploys.
+- `npm run deploy` — runs `build:pages` then publishes `dist/` to the `gh-pages` branch via `npx gh-pages -d dist`.
 - `npm run preview` — serves the built `dist/`.
 
 There is no test runner, ESLint, or Prettier configured. Type errors from `tsc -b` are the only automated check.
@@ -17,7 +18,7 @@ There is no test runner, ESLint, or Prettier configured. Type errors from `tsc -
 
 ## Architecture
 
-Single-page React 18 + TypeScript + Vite app. Two locales: `ru` (default) and `hy`. No backend — the lead form in `src/components/LeadForm.tsx` / `QuickLeadForm.tsx` is UI-only and explicitly waiting for a CRM/Telegram/email integration (see `uiCopy.formHint` in `src/content/site.ts`).
+Single-page React 18 + TypeScript + Vite app. Two locales: `ru` (default) and `hy`. No backend — the lead form in `src/components/LeadForm.tsx` is UI-only and explicitly waiting for a CRM/Telegram/email integration (see `uiCopy.formHint` in `src/content/site.ts`).
 
 ### Routing & locale
 

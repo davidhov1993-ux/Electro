@@ -88,7 +88,7 @@ export function LightBulbIcon({ className, title }: LightBulbIconProps) {
           fill: url(#electro-icon-bulb-beam-grad);
           opacity: 0;
           transform-box: fill-box;
-          transform-origin: 100px 92px;
+          transform-origin: 100px 116px;
           transition: opacity 240ms ease;
           animation: electro-icon-bulb-beam-sweep 1.9s ease-in-out infinite;
           animation-play-state: paused;
@@ -134,7 +134,7 @@ export function LightBulbIcon({ className, title }: LightBulbIconProps) {
           stroke-linecap: round;
           opacity: 0;
           transform-box: fill-box;
-          transform-origin: 100px 86px;
+          transform-origin: 100px 114px;
           transition: opacity 240ms ease;
         }
         .electro-icon-trigger:hover .electro-icon-bulb-ray,
@@ -146,11 +146,19 @@ export function LightBulbIcon({ className, title }: LightBulbIconProps) {
         .electro-icon-bulb-ray--2 { animation-delay: 0.1s; }
         .electro-icon-bulb-ray--3 { animation-delay: 0.2s; }
         .electro-icon-bulb-ray--4 { animation-delay: 0.05s; }
-        .electro-icon-bulb-ray--5 { animation-delay: 0.15s; }
 
         @keyframes electro-icon-bulb-ray-grow {
           0%, 100% { opacity: 0.4; }
           50%      { opacity: 1; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .electro-icon-bulb-halo,
+          .electro-icon-bulb-beam,
+          .electro-icon-bulb-flicker,
+          .electro-icon-bulb-ray {
+            animation: none !important;
+          }
         }
       `}</style>
 
@@ -160,7 +168,14 @@ export function LightBulbIcon({ className, title }: LightBulbIconProps) {
           <stop offset="60%" stopColor="#FFD21A" stopOpacity="0.18" />
           <stop offset="100%" stopColor="#FFD21A" stopOpacity="0" />
         </radialGradient>
-        <linearGradient id="electro-icon-bulb-beam-grad" x1="100" y1="88" x2="100" y2="190" gradientUnits="userSpaceOnUse">
+        <linearGradient
+          id="electro-icon-bulb-beam-grad"
+          x1="100"
+          y1="116"
+          x2="100"
+          y2="200"
+          gradientUnits="userSpaceOnUse"
+        >
           <stop offset="0%" stopColor="#FFD21A" stopOpacity="0.46" />
           <stop offset="58%" stopColor="#FFD21A" stopOpacity="0.14" />
           <stop offset="100%" stopColor="#FFD21A" stopOpacity="0" />
@@ -168,50 +183,53 @@ export function LightBulbIcon({ className, title }: LightBulbIconProps) {
       </defs>
 
       <g className="electro-icon-bulb">
-        {/* Halo behind the bulb */}
-        <circle className="electro-icon-bulb-halo" cx="100" cy="86" r="64" />
-        <path className="electro-icon-bulb-beam" d="M58 88 L142 88 L184 190 H16 Z" />
+        {/* Halo behind the glass */}
+        <circle className="electro-icon-bulb-halo" cx="100" cy="114" r="64" />
 
-        {/* Rays */}
+        {/* Beam shining DOWN from glass to the floor */}
+        <path className="electro-icon-bulb-beam" d="M58 116 L142 116 L184 200 L16 200 Z" />
+
+        {/* Rays around the glass equator */}
         <g className="electro-icon-bulb-flicker">
-          <line className="electro-icon-bulb-ray electro-icon-bulb-ray--1" x1="100" y1="20" x2="100" y2="6" />
-          <line className="electro-icon-bulb-ray electro-icon-bulb-ray--2" x1="44"  y1="44" x2="32"  y2="32" />
-          <line className="electro-icon-bulb-ray electro-icon-bulb-ray--3" x1="156" y1="44" x2="168" y2="32" />
-          <line className="electro-icon-bulb-ray electro-icon-bulb-ray--4" x1="32"  y1="92" x2="14"  y2="92" />
-          <line className="electro-icon-bulb-ray electro-icon-bulb-ray--5" x1="168" y1="92" x2="186" y2="92" />
+          <line className="electro-icon-bulb-ray electro-icon-bulb-ray--1" x1="32"  y1="114" x2="14"  y2="114" />
+          <line className="electro-icon-bulb-ray electro-icon-bulb-ray--2" x1="168" y1="114" x2="186" y2="114" />
+          <line className="electro-icon-bulb-ray electro-icon-bulb-ray--3" x1="64"  y1="84"  x2="50"  y2="70" />
+          <line className="electro-icon-bulb-ray electro-icon-bulb-ray--4" x1="136" y1="84"  x2="150" y2="70" />
         </g>
 
-        {/* Bulb glass */}
-        <path
-          className="electro-icon-bulb-glass"
-          d="M100 36
-             C 72 36, 56 58, 56 84
-             C 56 102, 66 114, 76 124
-             C 82 130, 84 134, 84 140
-             L 116 140
-             C 116 134, 118 130, 124 124
-             C 134 114, 144 102, 144 84
-             C 144 58, 128 36, 100 36 Z"
-        />
-
-        {/* Filament */}
-        <g className="electro-icon-bulb-flicker">
-          <path
-            className="electro-icon-bulb-filament"
-            d="M86 110 L86 96 Q86 84, 94 84 Q102 84, 102 96 Q102 84, 110 84 Q118 84, 118 96 L118 110"
-          />
-          <line className="electro-icon-bulb-filament" x1="86" y1="110" x2="118" y2="110" />
-        </g>
-
-        {/* Cap (screw base) */}
-        <rect className="electro-icon-bulb-cap" x="84" y="142" width="32" height="8" rx="1.4" />
-        <rect className="electro-icon-bulb-cap" x="86" y="152" width="28" height="8" rx="1.4" />
-        <line className="electro-icon-bulb-cap-line" x1="86" y1="148" x2="114" y2="148" />
+        {/* Cap contact tip — sits at the very top, screws into a socket above */}
+        <line className="electro-icon-bulb-cap-line" x1="98" y1="22" x2="102" y2="22" />
         <path
           className="electro-icon-bulb-cap"
-          d="M90 162 L110 162 L106 174 Q100 178, 94 174 Z"
+          d="M94 26 Q100 22, 106 26 L110 38 L90 38 Z"
         />
-        <line className="electro-icon-bulb-cap-line" x1="98" y1="178" x2="102" y2="178" />
+
+        {/* Cap thread rings — narrower on top, wider closer to the glass */}
+        <rect className="electro-icon-bulb-cap" x="86" y="40" width="28" height="8" rx="1.4" />
+        <rect className="electro-icon-bulb-cap" x="84" y="50" width="32" height="8" rx="1.4" />
+        <line className="electro-icon-bulb-cap-line" x1="86" y1="52" x2="114" y2="52" />
+
+        {/* Glass — hangs below the cap */}
+        <path
+          className="electro-icon-bulb-glass"
+          d="M100 164
+             C 72 164, 56 142, 56 116
+             C 56 98, 66 86, 76 76
+             C 82 70, 84 64, 84 58
+             L 116 58
+             C 116 64, 118 70, 124 76
+             C 134 86, 144 98, 144 116
+             C 144 142, 128 164, 100 164 Z"
+        />
+
+        {/* Filament — supported from above, W-shape sits in lower part of glass */}
+        <g className="electro-icon-bulb-flicker">
+          <line className="electro-icon-bulb-filament" x1="86" y1="90" x2="118" y2="90" />
+          <path
+            className="electro-icon-bulb-filament"
+            d="M86 90 L86 104 Q86 116, 94 116 Q102 116, 102 104 Q102 116, 110 116 Q118 116, 118 104 L118 90"
+          />
+        </g>
       </g>
     </svg>
   );

@@ -3,6 +3,7 @@ import type { Locale } from "@/src/types";
 
 const email = "example@mail.com";
 const phone = "+374 99 586 469";
+const showEmail = email !== "example@mail.com";
 
 export function SiteFooter({ locale }: { locale: Locale }) {
   const year = new Date().getFullYear();
@@ -28,9 +29,11 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           <a href={`tel:${phone.replace(/\s+/g, "")}`} className="site-footer__contact-link">
             {phone}
           </a>
-          <a href={`mailto:${email}`} className="site-footer__contact-link">
-            {email}
-          </a>
+          {showEmail ? (
+            <a href={`mailto:${email}`} className="site-footer__contact-link">
+              {email}
+            </a>
+          ) : null}
         </div>
       </div>
     </footer>

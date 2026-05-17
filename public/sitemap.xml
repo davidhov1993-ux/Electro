@@ -10,10 +10,10 @@
     <loc>https://example.com/ru/kontakty</loc>
   </url>
   <url>
-    <loc>https://example.com/ru/uslugi/elektromontazh</loc>
+    <loc>https://example.com/ru/elektromontazh-erevan</loc>
   </url>
   <url>
-    <loc>https://example.com/ru/uslugi/elektroshchity-i-avtomatika</loc>
+    <loc>https://example.com/ru/sborka-elektroshitov-erevan</loc>
   </url>
   <url>
     <loc>https://example.com/ru/uslugi/osveshchenie</loc>
@@ -34,7 +34,7 @@
     <loc>https://example.com/ru/uslugi/teplyi-pol</loc>
   </url>
   <url>
-    <loc>https://example.com/ru/uslugi/avariinyi-elektrik</loc>
+    <loc>https://example.com/ru/srochnyi-elektrik-erevan</loc>
   </url>
   <url>
     <loc>https://example.com/hy</loc>
@@ -46,10 +46,10 @@
     <loc>https://example.com/hy/kontakty</loc>
   </url>
   <url>
-    <loc>https://example.com/hy/uslugi/elektromontazh</loc>
+    <loc>https://example.com/hy/elektromontazh-erevan</loc>
   </url>
   <url>
-    <loc>https://example.com/hy/uslugi/elektroshchity-i-avtomatika</loc>
+    <loc>https://example.com/hy/elektrakan-vahanakner-montazh-erevan</loc>
   </url>
   <url>
     <loc>https://example.com/hy/uslugi/osveshchenie</loc>
@@ -70,6 +70,6 @@
     <loc>https://example.com/hy/uslugi/teplyi-pol</loc>
   </url>
   <url>
-    <loc>https://example.com/hy/uslugi/avariinyi-elektrik</loc>
+    <loc>https://example.com/hy/shtap-elektrik-erevan</loc>
   </url>
 </urlset>

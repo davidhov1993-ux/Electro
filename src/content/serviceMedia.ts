@@ -9,6 +9,7 @@ export interface ServiceMediaEntry {
 
 export const sceneAssetLibrary = {
   switchboard: "/images/44F657F0-372D-4D91-812A-D0246AA58189.png",
+  switchboardWebp: "/images/optimized/electrical-panel-automation.webp",
   lighting: "/images/AC4406F7-57AF-4484-839C-9D6038DC88A5.png",
   cctv: "/images/PHOTO-2026-03-10-19-50-30 (фон удален).png",
   lowCurrent: "/images/2BF26559-92EC-4512-99E0-253A12AECBFB.png",
@@ -33,7 +34,7 @@ export const serviceMedia: Record<ServiceSlug, ServiceMediaEntry> = {
     signal: { ru: "Кабель / коробка / инструмент", hy: "Մալուխ / տուփ / գործիք" },
   },
   "elektroshchity-i-avtomatika": {
-    image: sceneAssetLibrary.switchboard,
+    image: sceneAssetLibrary.switchboardWebp,
     alt: {
       ru: "Электрощит с автоматикой и распределением линий",
       hy: "Էլեկտրական վահան ավտոմատիկայով և գծերի բաշխմամբ",

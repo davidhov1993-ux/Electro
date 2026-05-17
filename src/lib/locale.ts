@@ -1,4 +1,14 @@
-import { commonSlugs, defaultLocale, localeNames, navCopy, siteUrl, supportedLocales, t } from "@/src/content/site";
+import {
+  commonSlugs,
+  defaultLocale,
+  getService,
+  getPublicServiceSlug,
+  localeNames,
+  navCopy,
+  siteUrl,
+  supportedLocales,
+  t,
+} from "@/src/content/site";
 import type { Locale } from "@/src/types";
 
 export function isLocale(value?: string): value is Locale {
@@ -21,8 +31,45 @@ export function servicesAnchor(locale: Locale) {
   return `${localePath(locale)}#uslugi`;
 }
 
+export function trustAnchor(locale: Locale) {
+  return `${localePath(locale)}#doverie`;
+}
+
+export function contactAnchor(locale: Locale) {
+  return `${localePath(locale)}#svyaz`;
+}
+
+export function workAnchor(locale: Locale) {
+  return `${localePath(locale)}#raboty`;
+}
+
+export function emergencyAnchor(locale: Locale) {
+  return `${localePath(locale)}#avariinyi-vyezd`;
+}
+
 export function servicePath(locale: Locale, serviceSlug: string) {
-  return `/${locale}/${commonSlugs.services}/${serviceSlug}`;
+  const publicSlug = getPublicServiceSlug(locale, serviceSlug);
+  return publicSlug === serviceSlug
+    ? `/${locale}/${commonSlugs.services}/${serviceSlug}`
+    : `/${locale}/${publicSlug}`;
+}
+
+export function serviceLeadPath(locale: Locale, serviceSlug: string) {
+  if (locale === "ru") {
+    return serviceSlug === "avariinyi-elektrik" ? emergencyAnchor(locale) : workAnchor(locale);
+  }
+
+  return servicePath(locale, serviceSlug);
+}
+
+export function serviceAlternatePaths(serviceSlug: string) {
+  return supportedLocales.reduce(
+    (paths, locale) => {
+      paths[locale] = servicePath(locale, serviceSlug);
+      return paths;
+    },
+    {} as Record<Locale, string>,
+  );
 }
 
 export function absoluteUrl(path: string) {
@@ -55,6 +102,19 @@ export function rewriteLocaleInPath(pathname: string, nextLocale: Locale) {
   }
 
   if (isLocale(segments[0])) {
+    const serviceFromCollection = segments[1] === commonSlugs.services && segments[2]
+      ? getService(segments[2])
+      : undefined;
+    const serviceFromTopLevel = segments.length === 2 ? getService(segments[1]) : undefined;
+
+    if (serviceFromCollection) {
+      return `${servicePath(nextLocale, serviceFromCollection.slug)}${search}${hash}`;
+    }
+
+    if (serviceFromTopLevel) {
+      return `${servicePath(nextLocale, serviceFromTopLevel.slug)}${search}${hash}`;
+    }
+
     segments[0] = nextLocale;
     return `/${segments.join("/")}${search}${hash}`;
   }
@@ -66,7 +126,7 @@ export function navigationLinks(locale: Locale) {
   return [
     { label: t(locale, navCopy.home), to: localePath(locale), end: true, hash: "" },
     { label: t(locale, navCopy.services), to: servicesAnchor(locale), end: true },
-    { label: t(locale, navCopy.about), to: pagePath(locale, "about"), end: false },
-    { label: t(locale, navCopy.contacts), to: pagePath(locale, "contacts"), end: false },
+    { label: t(locale, navCopy.about), to: locale === "ru" ? trustAnchor(locale) : pagePath(locale, "about"), end: true },
+    { label: t(locale, navCopy.contacts), to: locale === "ru" ? contactAnchor(locale) : pagePath(locale, "contacts"), end: true },
   ];
 }

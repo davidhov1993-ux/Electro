@@ -37,10 +37,30 @@ const serviceSlugs = [
   "avariinyi-elektrik",
 ];
 
+const servicePublicSlugs = {
+  elektromontazh: {
+    ru: "elektromontazh-erevan",
+    hy: "elektromontazh-erevan",
+  },
+  "elektroshchity-i-avtomatika": {
+    ru: "sborka-elektroshitov-erevan",
+    hy: "elektrakan-vahanakner-montazh-erevan",
+  },
+  "avariinyi-elektrik": {
+    ru: "srochnyi-elektrik-erevan",
+    hy: "shtap-elektrik-erevan",
+  },
+};
+
+function servicePath(locale, slug) {
+  const publicSlug = servicePublicSlugs[slug]?.[locale];
+  return publicSlug ? `/${locale}/${publicSlug}` : `/${locale}/uslugi/${slug}`;
+}
+
 const urls = locales.flatMap((locale) => {
   const localeRoot = `${siteUrl}/${locale}`;
   const pageUrls = staticPages.map((slug) => `${localeRoot}/${slug}`);
-  const serviceUrls = serviceSlugs.map((slug) => `${localeRoot}/uslugi/${slug}`);
+  const serviceUrls = serviceSlugs.map((slug) => `${siteUrl}${servicePath(locale, slug)}`);
   return [localeRoot, ...pageUrls, ...serviceUrls];
 });
 

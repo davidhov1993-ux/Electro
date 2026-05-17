@@ -17,6 +17,7 @@ export function MediaPlaceholder({
   caption,
   signals = [],
   variant = "card",
+  image,
 }: MediaPlaceholderProps) {
   return (
     <div className={`media-placeholder media-placeholder--${variant} media-placeholder--${accent}`}>
@@ -29,6 +30,9 @@ export function MediaPlaceholder({
         <span className="media-placeholder__wash" />
         <span className="media-placeholder__grid" />
         <span className="media-placeholder__glow" />
+        {image ? (
+          <img className="media-placeholder__asset" src={image} alt="" loading="lazy" />
+        ) : null}
         <span className="media-placeholder__module media-placeholder__module--primary" />
         <span className="media-placeholder__module media-placeholder__module--secondary" />
         <span className="media-placeholder__module media-placeholder__module--accent" />

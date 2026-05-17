@@ -29,6 +29,17 @@ export function SiteHeader({ locale }: { locale: Locale }) {
     };
   }, [menuOpen]);
 
+  const isNavItemActive = (target: string) => {
+    const [targetPath, targetHash = ""] = target.split("#");
+    const normalizedPath = targetPath || location.pathname;
+
+    if (target.includes("#")) {
+      return location.pathname === normalizedPath && location.hash === `#${targetHash}`;
+    }
+
+    return location.pathname === normalizedPath && location.hash === "";
+  };
+
   return (
     <header className={`site-header ${menuOpen ? "site-header--menu-open" : ""}`.trim()}>
       <div className="container header-main">
@@ -39,14 +50,14 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
           <nav
             className="main-nav main-nav--desktop"
-            aria-label={locale === "ru" ? "Основная навигация" : "Հիմնական նավիգացիա"}
+            aria-label={locale === "ru" ? "Основная навигация" : "Հիմնական մենյու"}
           >
             {desktopNavItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.end}
-                className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`.trim()}
+                className={() => `nav-link ${isNavItemActive(item.to) ? "active" : ""}`.trim()}
               >
                 {item.label}
               </NavLink>
@@ -75,10 +86,10 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                 menuOpen
                   ? locale === "ru"
                     ? "Закрыть меню"
-                    : "Փակել ընտրացանկը"
+                    : "Փակել մենյուն"
                   : locale === "ru"
                     ? "Открыть меню"
-                    : "Բացել ընտրացանկը"
+                    : "Բացել մենյուն"
               }
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
@@ -100,27 +111,43 @@ export function SiteHeader({ locale }: { locale: Locale }) {
         <button
           type="button"
           className="mobile-menu__backdrop"
-          aria-label={locale === "ru" ? "Закрыть меню" : "Փակել ընտրացանկը"}
+          aria-label={locale === "ru" ? "Закрыть меню" : "Փակել մենյուն"}
           onClick={() => setMenuOpen(false)}
         />
         <div className="mobile-menu__panel">
           <div className="mobile-menu__panel-head">
             <p className="mobile-menu__eyebrow">
-              {locale === "ru" ? "Навигация" : "Նավիգացիա"}
+              {locale === "ru" ? "Навигация" : "Նավարկում"}
             </p>
             <p className="mobile-menu__brand">{brandLabel}</p>
           </div>
 
+          <div
+            className="mobile-menu__locale"
+            aria-label={locale === "ru" ? "Сменить язык" : "Փոխել լեզուն"}
+          >
+            {localeItems.map((item) => (
+              <NavLink
+                key={item.locale}
+                to={item.to}
+                className={({ isActive }) => `mobile-menu__locale-link ${isActive ? "active" : ""}`.trim()}
+                onClick={() => setMenuOpen(false)}
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </div>
+
           <nav
             className="mobile-menu__nav"
-            aria-label={locale === "ru" ? "Мобильная навигация" : "Բջջային նավիգացիա"}
+            aria-label={locale === "ru" ? "Мобильная навигация" : "Մոբայլ մենյու"}
           >
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.end}
-                className={({ isActive }) => `mobile-menu__link ${isActive ? "active" : ""}`.trim()}
+                className={() => `mobile-menu__link ${isNavItemActive(item.to) ? "active" : ""}`.trim()}
                 onClick={() => setMenuOpen(false)}
               >
                 {item.label}

@@ -1,6 +1,6 @@
 import { homeSeoContent, hs } from "@/src/content/homeSeo";
-import { HomeObjectsSection } from "@/src/components/HomeObjectsSection";
 import { HomeServiceWall } from "@/src/components/HomeServiceWall";
+import { HomeTrustSection } from "@/src/components/HomeTrustSection";
 import { Seo } from "@/src/components/Seo";
 import { usePageLocale } from "@/src/hooks/usePageLocale";
 import { createLocalBusinessSchema, createOrganizationSchema } from "@/src/lib/seo";
@@ -27,14 +27,14 @@ export function HomePage() {
         "Умный дом",
       ]
     : [
-        "Արտակարգ մեկնում",
+        "Վթարային կանչ",
         "Էլեկտրամոնտաժ",
-        "Վահաններ",
+        "Էլեկտրական վահանակներ",
         "Լուսավորություն",
         "Տեսահսկում",
         "Դոմոֆոններ",
-        "Թույլ հոսանք",
-        "Տաք հատակ",
+        "Թույլ հոսանքներ (Ցածրավոլտ համակարգեր)",
+        "Տաքացվող հատակ",
         "Խելացի տուն",
       ];
 
@@ -52,7 +52,7 @@ export function HomePage() {
         <h1 className="sr-only">
           {locale === "ru"
             ? "Электрик в Ереване: электромонтаж, аварийный выезд и инженерные системы"
-            : "Էլեկտրիկ Երևանում՝ էլեկտրամոնտաժ, արտակարգ մեկնում և ինժեներական համակարգեր"}
+            : "Էլեկտրիկ Երևանում. էլեկտրամոնտաժ, վթարային ծառայություն և ինժեներական համակարգեր"}
         </h1>
         <div className="home-brand-hero__viewport">
           <div className="home-brand-hero__stage">
@@ -105,7 +105,7 @@ export function HomePage() {
 
       <HomeServiceWall locale={locale} />
 
-      <HomeObjectsSection locale={locale} />
+      <HomeTrustSection locale={locale} />
     </>
   );
 }

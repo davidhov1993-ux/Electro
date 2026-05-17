@@ -8,32 +8,47 @@ interface SeoProps {
   locale: Locale;
   title: string;
   description: string;
+  keywords?: string;
   path?: string;
+  alternatePaths?: Partial<Record<Locale, string>>;
   structuredData?: Array<Record<string, unknown>>;
   noIndex?: boolean;
 }
 
-export function Seo({ locale, title, description, path, structuredData = [], noIndex = false }: SeoProps) {
+export function Seo({
+  locale,
+  title,
+  description,
+  keywords,
+  path,
+  alternatePaths,
+  structuredData = [],
+  noIndex = false,
+}: SeoProps) {
   const siteName = brandName.ru;
   const canonical = path ? absoluteUrl(path) : undefined;
   const alternateUrls = path
     ? supportedLocales.map((item) => ({
         hrefLang: item,
-        href: absoluteUrl(rewriteLocaleInPath(path, item)),
+        href: absoluteUrl(alternatePaths?.[item] ?? rewriteLocaleInPath(path, item)),
       }))
     : [];
+  const defaultAlternatePath = path
+    ? alternatePaths?.[defaultLocale] ?? rewriteLocaleInPath(path, defaultLocale)
+    : undefined;
 
   return (
     <Helmet>
       <html lang={locale} />
       <title>{title}</title>
       <meta name="description" content={description} />
+      {keywords ? <meta name="keywords" content={keywords} /> : null}
       <meta name="robots" content={noIndex ? "noindex,nofollow" : "index,follow"} />
       {canonical ? <link rel="canonical" href={canonical} /> : null}
       {alternateUrls.map((item) => (
         <link key={item.hrefLang} rel="alternate" hrefLang={item.hrefLang} href={item.href} />
       ))}
-      {path ? <link rel="alternate" hrefLang="x-default" href={absoluteUrl(rewriteLocaleInPath(path, defaultLocale))} /> : null}
+      {defaultAlternatePath ? <link rel="alternate" hrefLang="x-default" href={absoluteUrl(defaultAlternatePath)} /> : null}
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       {canonical ? <meta property="og:url" content={canonical} /> : null}
