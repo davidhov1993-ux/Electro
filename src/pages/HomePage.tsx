@@ -90,8 +90,8 @@ export function HomePage() {
               </a>
             </div>
 
-            <div className="home-brand-hero__social-discount" aria-label="Социальная скидка пенсионерам и людям с инвалидностью">
-              <span className="home-brand-hero__social-discount-label">Социальная скидка</span>
+            <div className="home-brand-hero__social-discount" aria-label="Скидка 10 процентов пенсионерам и людям с инвалидностью">
+              <span className="home-brand-hero__social-discount-label">Скидка 10%</span>
               <span className="home-brand-hero__social-discount-text">Пенсионерам и людям с инвалидностью</span>
             </div>
 
