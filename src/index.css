@@ -52,6 +52,19 @@ body:has(.home-brand-hero) .site-header {
   min-width: 0;
 }
 
+.site-footer--minimal .site-footer__bar {
+  width: min(1240px, calc(100vw - 40px));
+  margin-inline: auto;
+}
+
+@media (max-width: 620px) {
+  .site-footer--minimal .site-footer__bar {
+    width: auto;
+    margin-left: max(20px, env(safe-area-inset-left));
+    margin-right: max(20px, env(safe-area-inset-right));
+  }
+}
+
 .home-brand-hero__video {
   background: var(--site-header-yellow, #ffd514);
 }
