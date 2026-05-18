@@ -5264,12 +5264,15 @@ html[lang="hy"] .emergency-service-page__final-copy h2 {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 18px 24px;
   align-items: end;
+  min-width: 0;
 }
 
 .home-trust-form__field--files {
+  min-width: 0;
   padding: 22px 24px;
   border: 1px dashed rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.015);
+  overflow: clip;
   transition: border-color 180ms ease, background-color 180ms ease;
 }
 
@@ -5296,6 +5299,7 @@ html[lang="hy"] .emergency-service-page__final-copy h2 {
   justify-content: space-between;
   gap: 18px 28px;
   flex-wrap: wrap;
+  min-width: 0;
   cursor: pointer;
 }
 
@@ -5308,6 +5312,8 @@ html[lang="hy"] .emergency-service-page__final-copy h2 {
   padding: 0 26px;
   border: 0;
   border-radius: 0;
+  box-sizing: border-box;
+  max-width: 100%;
   background: #ffd500;
   color: #111418;
   font-family: var(--font-mono);
@@ -5329,6 +5335,7 @@ html[lang="hy"] .emergency-service-page__final-copy h2 {
 .home-trust-form__file-copy {
   display: grid;
   gap: 4px;
+  min-width: 0;
 }
 
 .home-trust-form__file-hint {
@@ -5348,10 +5355,33 @@ html[lang="hy"] .emergency-service-page__final-copy h2 {
   display: grid;
   gap: 14px;
   justify-items: start;
+  min-width: 0;
 }
 
 .home-trust-form__submit {
   min-width: 248px;
+}
+
+@media (max-width: 1280px) {
+  .home-trust-form__bottom {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .home-trust-form__actions {
+    justify-items: stretch;
+  }
+
+  .home-trust-form__file-shell {
+    display: grid;
+    justify-content: stretch;
+  }
+
+  .home-trust-form__file-button,
+  .home-trust-form__submit {
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 @media (max-width: 1100px) {
