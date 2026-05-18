@@ -90,6 +90,11 @@ export function HomePage() {
               </a>
             </div>
 
+            <div className="home-brand-hero__social-discount" aria-label="Социальная скидка пенсионерам и людям с инвалидностью">
+              <span className="home-brand-hero__social-discount-label">Социальная скидка</span>
+              <span className="home-brand-hero__social-discount-text">Пенсионерам и людям с инвалидностью</span>
+            </div>
+
             <div className="home-brand-hero__marquee" aria-label={locale === "ru" ? "Направления" : "Ուղղություններ"}>
               <div className="home-brand-hero__marquee-track">
                 {[...heroMarqueeItems, ...heroMarqueeItems].map((item, index) => (

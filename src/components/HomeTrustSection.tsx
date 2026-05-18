@@ -45,6 +45,10 @@ interface TrustCopy {
   pricesEyebrow: string;
   pricesTitle: string;
   prices: PriceLine[];
+  discountEyebrow: string;
+  discountTitle: string;
+  discountBody: string;
+  discountNote: string;
   faqEyebrow: string;
   faqTitle: string;
   faq: FaqItem[];
@@ -63,6 +67,8 @@ interface TrustCopy {
   formFilesButton: string;
   formFilesHint: string;
   formFilesDrag: string;
+  formSocialDiscountLabel: string;
+  formSocialDiscountHint: string;
   formSubmit: string;
   formPrivacyPrefix: string;
   formPrivacyLink: string;
@@ -133,6 +139,10 @@ const trustContent: Record<Locale, TrustCopy> = {
       { label: "Прокладка кабеля", value: "от ... драм" },
       { label: "Сборка щита", value: "от ... драм" },
     ],
+    discountEyebrow: "Социальная скидка",
+    discountTitle: "Пенсионерам и людям с инвалидностью — скидка на работу",
+    discountBody: "Скажите об этом при звонке или отметьте в заявке. Скидку считаем от стоимости работы, без материалов.",
+    discountNote: "Финальную цену называем до начала работ.",
     faqEyebrow: "FAQ",
     faqTitle: "Частые вопросы",
     faq: [
@@ -176,6 +186,8 @@ const trustContent: Record<Locale, TrustCopy> = {
     formFilesButton: "Прикрепить",
     formFilesHint: "Фото, видео, PDF, Word, Excel.",
     formFilesDrag: "Необязательно.",
+    formSocialDiscountLabel: "Хочу уточнить социальную скидку",
+    formSocialDiscountHint: "Для пенсионеров и людей с инвалидностью. Без документов на сайте — детали можно обсудить по телефону.",
     formSubmit: "Отправить заявку",
     formPrivacyPrefix: "Нажимая кнопку, вы соглашаетесь с",
     formPrivacyLink: "Политикой конфиденциальности",
@@ -238,6 +250,10 @@ const trustContent: Record<Locale, TrustCopy> = {
       { label: "Մալուխի անցկացում", value: "սկսած ... դրամից" },
       { label: "Վահանակի հավաքում", value: "սկսած ... դրամից" },
     ],
+    discountEyebrow: "Социальная скидка",
+    discountTitle: "Пенсионерам и людям с инвалидностью — скидка на работу",
+    discountBody: "Скажите об этом при звонке или отметьте в заявке. Скидку считаем от стоимости работы, без материалов.",
+    discountNote: "Финальную цену называем до начала работ.",
     faqEyebrow: "FAQ (ՀԱՃԱԽ ՏՐՎՈՂ ՀԱՐՑԵՐ)",
     faqTitle: "Հաճախ տրվող հարցեր",
     faq: [
@@ -281,6 +297,8 @@ const trustContent: Record<Locale, TrustCopy> = {
     formFilesButton: "Կցել ֆայլ",
     formFilesHint: "Լուսանկար, տեսանյութ, PDF, Word, Excel:",
     formFilesDrag: "Պարտադիր չէ:",
+    formSocialDiscountLabel: "Хочу уточнить социальную скидку",
+    formSocialDiscountHint: "Для пенсионеров и людей с инвалидностью. Без документов на сайте — детали можно обсудить по телефону.",
     formSubmit: "Ուղարկել հայտը",
     formPrivacyPrefix: "Սեղմելով կոճակը՝ Դուք համաձայնում եք",
     formPrivacyLink: "Գաղտնիության քաղաքականությանը",
@@ -323,6 +341,7 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
   const [statusMessage, setStatusMessage] = useState("");
   const [dragActive, setDragActive] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [socialDiscountRequested, setSocialDiscountRequested] = useState(false);
 
   const resetStatus = () => {
     if (status !== "idle") {
@@ -463,6 +482,15 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
               </article>
             ))}
           </div>
+
+          <article className="home-trust-page__discount">
+            <div className="home-trust-page__discount-copy">
+              <p className="home-trust-page__discount-eyebrow">{copy.discountEyebrow}</p>
+              <h4 className="home-trust-page__discount-title">{copy.discountTitle}</h4>
+              <p className="home-trust-page__discount-body">{copy.discountBody}</p>
+            </div>
+            <p className="home-trust-page__discount-note">{copy.discountNote}</p>
+          </article>
         </section>
 
         <section className="home-trust-page__faq" aria-labelledby="home-trust-faq-title">
@@ -546,6 +574,21 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
                 />
               </label>
             </div>
+
+            <label className="home-trust-form__social-option">
+              <input
+                type="checkbox"
+                checked={socialDiscountRequested}
+                onChange={(event) => {
+                  setSocialDiscountRequested(event.target.checked);
+                  resetStatus();
+                }}
+              />
+              <span className="home-trust-form__social-option-copy">
+                <strong>{copy.formSocialDiscountLabel}</strong>
+                <small>{copy.formSocialDiscountHint}</small>
+              </span>
+            </label>
 
             <label className="home-trust-form__field" htmlFor={messageId}>
               <span className="home-trust-form__field-label">{copy.formMessageLabel}</span>
