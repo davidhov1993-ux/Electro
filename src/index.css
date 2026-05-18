@@ -3697,7 +3697,20 @@ body:has(.installation-service-page) .header-toggle {
 }
 
 .home-brand-hero {
-  background: var(--electro-yellow);
+  --home-hero-yellow: #ffd500;
+  background: var(--home-hero-yellow);
+}
+
+html[lang="hy"] .home-brand-hero {
+  --home-hero-yellow: #ffd200;
+}
+
+.home-brand-hero__viewport,
+.home-brand-hero__stage,
+.home-brand-hero__media,
+.home-brand-hero__video-shell,
+.home-brand-hero__video {
+  background: var(--home-hero-yellow);
 }
 
 body:has(.home-brand-hero) {
