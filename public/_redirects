@@ -1,2 +1,8 @@
-/* /index.html 200
+# Canonical locale URLs must keep the trailing slash so static HTML copies
+# under /ru/ and /hy/ are served to crawlers before the SPA fallback.
+/ru /ru/ 301
+/hy /hy/ 301
+/ru/politika-konfidentsialnosti /ru/politika-konfidentsialnosti/ 301
+/hy/politika-konfidentsialnosti /hy/politika-konfidentsialnosti/ 301
 
+/* /index.html 200

@@ -73,11 +73,12 @@ export function detectSystemLocale(): Locale | null {
 }
 
 export function localePath(locale: Locale, suffix = "") {
-  return `/${locale}${suffix}`;
+  if (!suffix) return `/${locale}/`;
+  return withTrailingSlash(`/${locale}${suffix}`);
 }
 
 export function pagePath(locale: Locale, slug: keyof typeof commonSlugs) {
-  return `/${locale}/${commonSlugs[slug]}`;
+  return `/${locale}/${commonSlugs[slug]}/`;
 }
 
 export function absoluteUrl(path: string) {
@@ -106,15 +107,23 @@ export function rewriteLocaleInPath(pathname: string, nextLocale: Locale) {
   const segments = cleanPath.split("/").filter(Boolean);
 
   if (segments.length === 0) {
-    return `/${nextLocale}${search}${hash}`;
+    return `/${nextLocale}/${search}${hash}`;
   }
 
   if (isLocale(segments[0])) {
     segments[0] = nextLocale;
-    return `/${segments.join("/")}${search}${hash}`;
+    return withTrailingSlash(`/${segments.join("/")}`) + search + hash;
   }
 
-  return `/${nextLocale}/${segments.join("/")}${search}${hash}`;
+  return withTrailingSlash(`/${nextLocale}/${segments.join("/")}`) + search + hash;
+}
+
+function withTrailingSlash(path: string) {
+  if (path === "/" || path.endsWith("/") || /\.[a-z0-9]+$/i.test(path)) {
+    return path;
+  }
+
+  return `${path}/`;
 }
 
 function localeFromLanguageTag(value?: string): Locale | null {

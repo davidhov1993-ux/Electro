@@ -3,8 +3,52 @@ import ReactDOM from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import { RouterProvider } from "react-router-dom";
 
-import "@/src/index.css";
+import "@/src/index.clean.css";
 import { router } from "@/src/router";
+
+const localeScrollStorageKey = "electro_locale_switch_scroll_y";
+
+if ("scrollRestoration" in window.history) {
+  window.history.scrollRestoration = "manual";
+}
+
+const navigationEntry = window.performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+const legacyNavigation = (window.performance as Performance & { navigation?: { type: number } }).navigation;
+const isPageReload = navigationEntry?.type === "reload" || legacyNavigation?.type === 1;
+
+const resetScrollToTop = () => {
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "auto",
+  });
+};
+
+if (window.location.hash) {
+  window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}`);
+}
+
+window.addEventListener("pagehide", resetScrollToTop);
+window.addEventListener("beforeunload", resetScrollToTop);
+
+if (isPageReload) {
+  try {
+    window.sessionStorage.removeItem(localeScrollStorageKey);
+  } catch {
+    // Ignore storage errors in private or locked-down browsing modes.
+  }
+
+  if (window.location.hash) {
+    window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}`);
+  }
+
+  resetScrollToTop();
+  window.addEventListener("pageshow", resetScrollToTop, { once: true });
+  window.addEventListener("load", resetScrollToTop, { once: true });
+  [80, 240, 600, 1200, 2000].forEach((delay) => window.setTimeout(resetScrollToTop, delay));
+}
 
 const rootElement = document.getElementById("root");
 

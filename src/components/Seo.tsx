@@ -13,6 +13,8 @@ interface SeoProps {
   alternatePaths?: Partial<Record<Locale, string>>;
   structuredData?: Array<Record<string, unknown>>;
   noIndex?: boolean;
+  image?: string;
+  imageAlt?: string;
 }
 
 export function Seo({
@@ -24,26 +26,41 @@ export function Seo({
   alternatePaths,
   structuredData = [],
   noIndex = false,
+  image,
+  imageAlt,
 }: SeoProps) {
   const siteName = brandName.ru;
-  const canonical = path ? absoluteUrl(path) : undefined;
-  const alternateUrls = path
+  const canonicalPath = path ? toCanonicalPath(path) : undefined;
+  const canonical = canonicalPath ? absoluteUrl(canonicalPath) : undefined;
+  const shareImage = absoluteUrl(image ?? "/media/hero-ru-bg-brand-yellow-poster.png");
+  const normalizedLocale = locale === "ru" ? "ru-AM" : "hy-AM";
+  const alternateUrls = canonicalPath
     ? supportedLocales.map((item) => ({
-        hrefLang: item,
-        href: absoluteUrl(alternatePaths?.[item] ?? rewriteLocaleInPath(path, item)),
+        hrefLang: item === "ru" ? "ru-AM" : "hy-AM",
+        href: absoluteUrl(toCanonicalPath(alternatePaths?.[item] ?? rewriteLocaleInPath(canonicalPath, item))),
       }))
     : [];
-  const defaultAlternatePath = path
-    ? alternatePaths?.[defaultLocale] ?? rewriteLocaleInPath(path, defaultLocale)
+  const defaultAlternatePath = canonicalPath
+    ? canonicalPath === `/${locale}/`
+      ? "/"
+      : toCanonicalPath(alternatePaths?.[defaultLocale] ?? rewriteLocaleInPath(canonicalPath, defaultLocale))
     : undefined;
 
   return (
     <Helmet>
-      <html lang={locale} />
+      <html lang={normalizedLocale} />
       <title>{title}</title>
       <meta name="description" content={description} />
       {keywords ? <meta name="keywords" content={keywords} /> : null}
-      <meta name="robots" content={noIndex ? "noindex,nofollow" : "index,follow"} />
+      <meta
+        name="robots"
+        content={noIndex ? "noindex,nofollow" : "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"}
+      />
+      <meta name="googlebot" content={noIndex ? "noindex,nofollow" : "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"} />
+      <meta name="theme-color" content="#fed400" />
+      <meta name="format-detection" content="telephone=yes" />
+      <meta name="geo.region" content="AM-ER" />
+      <meta name="geo.placename" content={locale === "ru" ? "Ереван" : "Երևան"} />
       {canonical ? <link rel="canonical" href={canonical} /> : null}
       {alternateUrls.map((item) => (
         <link key={item.hrefLang} rel="alternate" hrefLang={item.hrefLang} href={item.href} />
@@ -55,7 +72,14 @@ export function Seo({
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content={siteName} />
       <meta property="og:locale" content={locale === "ru" ? "ru_RU" : "hy_AM"} />
+      {locale === "ru" ? <meta property="og:locale:alternate" content="hy_AM" /> : <meta property="og:locale:alternate" content="ru_RU" />}
+      <meta property="og:image" content={shareImage} />
+      <meta property="og:image:secure_url" content={shareImage} />
+      <meta property="og:image:alt" content={imageAlt ?? title} />
       <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={shareImage} />
       {structuredData.map((item, index) => (
         <script key={index} type="application/ld+json">
           {JSON.stringify(item)}
@@ -63,4 +87,19 @@ export function Seo({
       ))}
     </Helmet>
   );
+}
+
+function toCanonicalPath(value: string) {
+  const hashIndex = value.indexOf("#");
+  const withoutHash = hashIndex >= 0 ? value.slice(0, hashIndex) : value;
+  const hash = hashIndex >= 0 ? value.slice(hashIndex) : "";
+  const queryIndex = withoutHash.indexOf("?");
+  const path = queryIndex >= 0 ? withoutHash.slice(0, queryIndex) : withoutHash;
+  const query = queryIndex >= 0 ? withoutHash.slice(queryIndex) : "";
+
+  if (path === "/" || path.endsWith("/") || /\.[a-z0-9]+$/i.test(path)) {
+    return `${path}${query}${hash}`;
+  }
+
+  return `${path}/${query}${hash}`;
 }

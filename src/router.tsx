@@ -12,14 +12,14 @@ function LocalizedHomeRedirect() {
   const params = useParams();
   const locale = params.locale ?? detectPreferredLocale();
 
-  return <Navigate to={`/${locale}`} replace />;
+  return <Navigate to={`/${locale}/`} replace />;
 }
 
 function PreferredLocaleRedirect() {
   const location = useLocation();
   const locale = detectPreferredLocale();
 
-  return <Navigate to={`/${locale}${location.search}${location.hash}`} replace />;
+  return <Navigate to={`/${locale}/${location.search}${location.hash}`} replace />;
 }
 
 export const router = createBrowserRouter([

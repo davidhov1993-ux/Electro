@@ -2,10 +2,19 @@ import type { ChangeEvent, DragEvent, FormEvent } from "react";
 import { useId, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { businessEmail, hasBusinessEmail } from "@/src/content/contact";
+import {
+  businessPhoneDisplay,
+  businessPhoneMachine,
+  businessTelegramUrl,
+  businessViberUrl,
+  businessWhatsappUrl,
+} from "@/src/content/site";
+import { submitContactRequest } from "@/src/lib/contactForm";
 import { pagePath } from "@/src/lib/locale";
 import type { Locale } from "@/src/types";
 
-type FormStatus = "idle" | "error" | "success";
+type FormStatus = "idle" | "error" | "success" | "submitting";
 
 interface FormState {
   name: string;
@@ -42,8 +51,14 @@ interface TrustCopy {
   introBody: string;
   facts: TrustFact[];
   sections: TrustBulletSection[];
+  serviceAreaEyebrow: string;
+  serviceAreaTitle: string;
+  serviceAreaBody: string;
+  serviceDistricts: string[];
   pricesEyebrow: string;
   pricesTitle: string;
+  priceServiceHeader: string;
+  priceCostHeader: string;
   prices: PriceLine[];
   discountEyebrow: string;
   discountTitle: string;
@@ -70,19 +85,23 @@ interface TrustCopy {
   formSocialDiscountLabel: string;
   formSocialDiscountHint: string;
   formSubmit: string;
+  formSubmitPending: string;
   formPrivacyPrefix: string;
   formPrivacyLink: string;
   formPrivacySuffix: string;
   statusRequired: string;
   statusInvalidEmail: string;
   statusSuccess: string;
+  statusSendError: string;
 }
 
-const phone = "+374 99 586 469";
-const phoneHref = "tel:+37499586469";
-const whatsappHref = "https://wa.me/37499586469";
-const email = "example@mail.com";
-const showEmail = email !== "example@mail.com";
+const phone = businessPhoneDisplay;
+const phoneHref = `tel:${businessPhoneMachine}`;
+const whatsappHref = businessWhatsappUrl;
+const telegramHref = businessTelegramUrl;
+const viberHref = businessViberUrl;
+const email = businessEmail;
+const showEmail = hasBusinessEmail;
 
 const trustContent: Record<Locale, TrustCopy> = {
   ru: {
@@ -129,20 +148,42 @@ const trustContent: Record<Locale, TrustCopy> = {
         ],
       },
     ],
+    serviceAreaEyebrow: "Зона обслуживания",
+    serviceAreaTitle: "Работаем по всем административным районам Еревана",
+    serviceAreaBody:
+      "Выезжаем на срочные и плановые заявки в жилые дома, квартиры, офисы, магазины и кафе по всему Еревану.",
+    serviceDistricts: [
+      "Кентрон",
+      "Арабкир",
+      "Нор-Норк",
+      "Малатия-Себастия",
+      "Ачапняк",
+      "Шенгавит",
+      "Канакер-Зейтун",
+      "Эребуни",
+      "Норк-Мараш",
+      "Аван",
+      "Давташен",
+      "Нубарашен",
+    ],
     pricesEyebrow: "Цены",
     pricesTitle: "Примерные цены",
+    priceServiceHeader: "Услуга",
+    priceCostHeader: "Цена",
     prices: [
-      { label: "Выезд электрика", value: "от ... драм" },
-      { label: "Аварийный выезд", value: "от ... драм" },
-      { label: "Диагностика", value: "от ... драм" },
-      { label: "Точка", value: "от ... драм" },
-      { label: "Прокладка кабеля", value: "от ... драм" },
-      { label: "Сборка щита", value: "от ... драм" },
+      { label: "Установка розетки", value: "от 1 500 AMD" },
+      { label: "Вызов электрика на дом", value: "от 10 000 AMD" },
+      { label: "Срочный вызов электрика 24/7", value: "от 20 000 AMD" },
+      { label: "Диагностика электрики", value: "от 10 000 AMD" },
+      { label: "Монтаж электропроводки", value: "от 5 000 AMD за точку" },
+      { label: "Прокладка кабеля", value: "от 500 AMD/м.п." },
+      { label: "Установка и замена автоматов", value: "от 5 000 AMD" },
+      { label: "Сборка щита", value: "от 30 000 AMD" },
     ],
-    discountEyebrow: "ՍՈՑԻԱԼԱԿԱՆ ԶԵՂՉ՝ 10%",
-    discountTitle: "Թոշակառուների և հաշմանդամություն ունեցող անձանց համար — 10% զեղչ կատարված աշխատանքների համար:",
-    discountBody: "Հայտնեք այդ մասին զանգի ընթացքում կամ նշեք հայտի մեջ: Զեղչը հաշվարկվում է միայն աշխատանքի արժեքից՝ առանց նյութերի:",
-    discountNote: "ՎԵՐՋՆԱԿԱՆ ԳԻՆԸ ՆՇՎՈՒՄ Է ՄԻՆՉԵՎ ԱՇԽԱՏԱՆՔՆԵՐԸ ՍԿՍԵԼԸ:",
+    discountEyebrow: "СОЦИАЛЬНАЯ СКИДКА 10%",
+    discountTitle: "Пенсионерам и людям с инвалидностью — скидка 10% на работу",
+    discountBody: "Скажите об этом при звонке или отметьте в заявке. Скидку считаем от стоимости работы, без материалов.",
+    discountNote: "ФИНАЛЬНУЮ ЦЕНУ НАЗЫВАЕМ ДО НАЧАЛА РАБОТ.",
     faqEyebrow: "FAQ",
     faqTitle: "Частые вопросы",
     faq: [
@@ -184,17 +225,19 @@ const trustContent: Record<Locale, TrustCopy> = {
     formMessagePlaceholder: "Что случилось, что нужно сделать, есть ли срочность.",
     formFilesLabel: "Файлы",
     formFilesButton: "Прикрепить",
-    formFilesHint: "Фото, видео, PDF, Word, Excel.",
-    formFilesDrag: "Необязательно.",
-    formSocialDiscountLabel: "Ցանկանում եմ ճշտել 10% զեղչը",
-    formSocialDiscountHint: "Թոշակառուների և հաշմանդամություն ունեցող անձանց համար: Կայքում փաստաթղթեր ներկայացնելու կարիք չկա — մանրամասները կարող եք քննարկել հեռախոսով:",
+    formFilesHint: "Фото, PDF, Word, Excel.",
+    formFilesDrag: "Видео лучше отправить в WhatsApp.",
+    formSocialDiscountLabel: "Хочу уточнить скидку 10%",
+    formSocialDiscountHint: "Для пенсионеров и людей с инвалидностью. Без документов на сайте — детали можно обсудить по телефону.",
     formSubmit: "Отправить заявку",
+    formSubmitPending: "Отправляем...",
     formPrivacyPrefix: "Нажимая кнопку, вы соглашаетесь с",
     formPrivacyLink: "Политикой конфиденциальности",
     formPrivacySuffix: ".",
     statusRequired: "Оставьте имя, телефон, коротко опишите задачу и подтвердите согласие с Политикой конфиденциальности.",
     statusInvalidEmail: "Проверьте email или оставьте это поле пустым.",
-    statusSuccess: "Форма заполнена. Если срочно, лучше сразу позвонить.",
+    statusSuccess: "Заявка отправлена. Если вопрос срочный, лучше сразу позвонить.",
+    statusSendError: "Заявка не отправилась. Попробуйте ещё раз или свяжитесь с нами по телефону или WhatsApp.",
   },
   hy: {
     sectionLabel: "Վստահություն և կապ",
@@ -240,18 +283,40 @@ const trustContent: Record<Locale, TrustCopy> = {
         ],
       },
     ],
+    serviceAreaEyebrow: "Սպասարկման տարածքները",
+    serviceAreaTitle: "Աշխատում ենք Երևանի բոլոր վարչական շրջաններում",
+    serviceAreaBody:
+      "Շտապ և պլանային հայտերով այցելում ենք բնակարաններ, առանձնատներ, գրասենյակներ, խանութներ և սրճարաններ ամբողջ Երևանում:",
+    serviceDistricts: [
+      "Կենտրոն",
+      "Արաբկիր",
+      "Նոր Նորք",
+      "Մալաթիա-Սեբաստիա",
+      "Աջափնյակ",
+      "Շենգավիթ",
+      "Քանաքեռ-Զեյթուն",
+      "Էրեբունի",
+      "Նորք-Մարաշ",
+      "Ավան",
+      "Դավթաշեն",
+      "Նուբարաշեն",
+    ],
     pricesEyebrow: "Գներ",
     pricesTitle: "Մոտավոր արժեքներ",
+    priceServiceHeader: "Ծառայություն",
+    priceCostHeader: "Արժեք",
     prices: [
-      { label: "Էլեկտրիկի այցելություն", value: "սկսած ... դրամից" },
-      { label: "Վթարային այց", value: "սկսած ... դրամից" },
-      { label: "Ախտորոշում (դիագնոստիկա)", value: "սկսած ... դրամից" },
-      { label: "Կետ (տոչկա)", value: "սկսած ... դրամից" },
-      { label: "Մալուխի անցկացում", value: "սկսած ... դրամից" },
-      { label: "Վահանակի հավաքում", value: "սկսած ... դրամից" },
+      { label: "Վարդակի տեղադրում", value: "սկսած 1 500 AMD-ից" },
+      { label: "Էլեկտրիկի կանչ տուն", value: "սկսած 10 000 AMD-ից" },
+      { label: "Էլեկտրիկի շտապ կանչ 24/7", value: "սկսած 20 000 AMD-ից" },
+      { label: "Էլեկտրականության ախտորոշում", value: "սկսած 10 000 AMD-ից" },
+      { label: "Էլեկտրոմոնտաժային աշխատանքներ", value: "սկսած 5 000 AMD-ից մեկ կետի համար" },
+      { label: "Մալուխների անցկացում", value: "սկսած 500 AMD/մ.պ." },
+      { label: "Ավտոմատների տեղադրում և փոխարինում", value: "սկսած 5 000 AMD-ից" },
+      { label: "Վահանակի հավաքում", value: "սկսած 30 000 AMD" },
     ],
     discountEyebrow: "ՍՈՑԻԱԼԱԿԱՆ ԶԵՂՉ՝ 10%",
-    discountTitle: "Թոշակառուների և հաշմանդամություն ունեցող անձանց համար",
+    discountTitle: "Թոշակառուների և հաշմանդամություն ունեցող անձանց համար — 10% զեղչ կատարված աշխատանքների համար:",
     discountBody: "Հայտնեք այդ մասին զանգի ընթացքում կամ նշեք հայտի մեջ: Զեղչը հաշվարկվում է միայն աշխատանքի արժեքից՝ առանց նյութերի:",
     discountNote: "ՎԵՐՋՆԱԿԱՆ ԳԻՆԸ ՆՇՎՈՒՄ Է ՄԻՆՉԵՎ ԱՇԽԱՏԱՆՔՆԵՐԸ ՍԿՍԵԼԸ:",
     faqEyebrow: "FAQ (ՀԱՃԱԽ ՏՐՎՈՂ ՀԱՐՑԵՐ)",
@@ -295,17 +360,19 @@ const trustContent: Record<Locale, TrustCopy> = {
     formMessagePlaceholder: "Ի՞նչ է պատահել, ի՞նչ է անհրաժեշտ անել, կա՞ արդյոք շտապողականություն:",
     formFilesLabel: "Ֆայլեր",
     formFilesButton: "Կցել ֆայլ",
-    formFilesHint: "Լուսանկար, տեսանյութ, PDF, Word, Excel:",
-    formFilesDrag: "Պարտադիր չէ:",
+    formFilesHint: "Լուսանկար, PDF, Word, Excel:",
+    formFilesDrag: "Տեսանյութը լավ է ուղարկել WhatsApp-ով:",
     formSocialDiscountLabel: "Ցանկանում եմ ճշտել 10% զեղչը",
     formSocialDiscountHint: "Թոշակառուների և հաշմանդամություն ունեցող անձանց համար: Կայքում փաստաթղթեր ներկայացնելու կարիք չկա — մանրամասները կարող եք քննարկել հեռախոսով:",
     formSubmit: "Ուղարկել հայտը",
+    formSubmitPending: "Ուղարկվում է...",
     formPrivacyPrefix: "Սեղմելով կոճակը՝ Դուք համաձայնում եք",
     formPrivacyLink: "Գաղտնիության քաղաքականությանը",
     formPrivacySuffix: ":",
     statusRequired: "Լրացրեք Ձեր անունը, հեռախոսահամարը, հակիրճ նկարագրեք խնդիրը և հաստատեք համաձայնությունը Գաղտնիության քաղաքականության հետ:",
     statusInvalidEmail: "Ստուգեք էլ. փոստի հասցեն կամ թողեք այս դաշտը դատարկ:",
-    statusSuccess: "Հայտը հաջողությամբ լրացված է: Եթե հարցը շտապ է, ավելի լավ է միանգամից զանգահարել:",
+    statusSuccess: "Հայտն ուղարկված է: Եթե հարցը շտապ է, ավելի լավ է անմիջապես զանգահարել:",
+    statusSendError: "Հայտը չի ուղարկվել։ Կրկնեք փորձը կամ կապ հաստատեք հեռախոսով կամ WhatsApp-ով:",
   },
 };
 
@@ -314,11 +381,58 @@ function sanitizePhone(value: string) {
 }
 
 function applyFileLimit(files: File[] | FileList | null) {
-  return Array.from(files ?? []).slice(0, 8).map((file) => file.name);
+  return Array.from(files ?? []).slice(0, 8);
 }
 
 function hasValidEmail(value: string) {
   return /\S+@\S+\.\S+/.test(value.trim());
+}
+
+function HomeTrustProcessCopy({ copy, locale }: { copy: TrustCopy; locale: Locale }) {
+  return (
+    <section className={`home-trust-process home-trust-process--${locale}`} aria-labelledby="home-trust-process-title">
+      <div className="home-trust-process__intro">
+        <div className="home-trust-process__label-row">
+          <span className="home-trust-process__label-mark" aria-hidden="true" />
+          <p className="home-trust-process__eyebrow">{copy.introEyebrow}</p>
+        </div>
+        <div className="home-trust-process__intro-copy">
+          <h2 id="home-trust-process-title" className="home-trust-process__title">
+            {copy.introTitle}
+          </h2>
+          <p className="home-trust-process__lead">{copy.introBody}</p>
+        </div>
+      </div>
+
+      <div className="home-trust-process__facts" aria-label={copy.introEyebrow}>
+        {copy.facts.map((fact, index) => (
+          <article key={fact.title} className="home-trust-process__fact">
+            <span className="home-trust-process__fact-index" aria-hidden="true">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <div className="home-trust-process__fact-copy">
+              <p className="home-trust-process__fact-title">{fact.title}</p>
+              <p className="home-trust-process__fact-body">{fact.body}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="home-trust-process__details">
+        {copy.sections.map((section) => (
+          <section key={section.title} className="home-trust-process__detail">
+            <p className="home-trust-process__detail-eyebrow">{section.eyebrow}</p>
+            <h3 className="home-trust-process__detail-title">{section.title}</h3>
+            <ul className="home-trust-process__list">
+              {section.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 export function HomeTrustSection({ locale }: { locale: Locale }) {
@@ -330,13 +444,14 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
   const fileId = useId();
   const privacyId = useId();
   const dragDepth = useRef(0);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [values, setValues] = useState<FormState>({
     name: "",
     phone: "",
     email: "",
     message: "",
   });
-  const [files, setFiles] = useState<string[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [status, setStatus] = useState<FormStatus>("idle");
   const [statusMessage, setStatusMessage] = useState("");
   const [dragActive, setDragActive] = useState(false);
@@ -365,6 +480,16 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
 
   const handleFilesChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFiles(applyFileLimit(event.target.files));
+    resetStatus();
+  };
+
+  const handleFileRemove = (indexToRemove: number) => {
+    setFiles((current) => current.filter((_, index) => index !== indexToRemove));
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+
     resetStatus();
   };
 
@@ -402,7 +527,7 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
     resetStatus();
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const phoneDigits = values.phone.replace(/\D/g, "");
@@ -425,46 +550,71 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
       return;
     }
 
-    setStatus("success");
-    setStatusMessage(copy.statusSuccess);
+    setStatus("submitting");
+    setStatusMessage("");
+
+    try {
+      const result = await submitContactRequest({
+        locale,
+        source: "home-trust-form",
+        name: values.name,
+        phone: values.phone,
+        email: values.email,
+        message: values.message,
+        privacyAccepted,
+        socialDiscountRequested,
+        files,
+      });
+
+      if (!result.ok) {
+        setStatus("error");
+        setStatusMessage(result.message ?? copy.statusSendError);
+        return;
+      }
+
+      setValues({
+        name: "",
+        phone: "",
+        email: "",
+        message: "",
+      });
+      setFiles([]);
+      setPrivacyAccepted(false);
+      setSocialDiscountRequested(false);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+
+      setStatus("success");
+      setStatusMessage(result.message ?? copy.statusSuccess);
+    } catch {
+      setStatus("error");
+      setStatusMessage(copy.statusSendError);
+    }
   };
 
   return (
     <section id="doverie" className="home-trust-page" aria-label={copy.sectionLabel}>
       <div className="home-trust-page__inner">
-        <div className="home-trust-page__intro">
-          <p className="home-trust-page__eyebrow">{copy.introEyebrow}</p>
-          <h2 className="home-trust-page__title">{copy.introTitle}</h2>
-          <div className="home-trust-page__copy">
-            <p>{copy.introBody}</p>
+        <HomeTrustProcessCopy copy={copy} locale={locale} />
+
+        <section className="home-trust-page__service-area" aria-labelledby="home-trust-service-area-title">
+          <div className="home-trust-page__section-head">
+            <p className="home-trust-page__section-eyebrow">{copy.serviceAreaEyebrow}</p>
+            <h2 id="home-trust-service-area-title" className="home-trust-page__section-title">
+              {copy.serviceAreaTitle}
+            </h2>
           </div>
-        </div>
 
-        <div className="home-trust-page__facts">
-          {copy.facts.map((fact) => (
-            <article key={fact.title} className="home-trust-page__fact">
-              <p className="home-trust-page__fact-title">{fact.title}</p>
-              <p className="home-trust-page__fact-body">{fact.body}</p>
-            </article>
-          ))}
-        </div>
+          <p className="home-trust-page__service-area-body">{copy.serviceAreaBody}</p>
 
-        <div className="home-trust-page__sections">
-          {copy.sections.map((section) => (
-            <section key={section.title} className="home-trust-page__section">
-              <div className="home-trust-page__section-head">
-                <p className="home-trust-page__section-eyebrow">{section.eyebrow}</p>
-                <h3 className="home-trust-page__section-title">{section.title}</h3>
-              </div>
-
-              <ul className="home-trust-page__list">
-                {section.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
+          <ul className="home-trust-page__district-list" aria-label={copy.serviceAreaTitle}>
+            {copy.serviceDistricts.map((district) => (
+              <li key={district}>{district}</li>
+            ))}
+          </ul>
+        </section>
 
         <section className="home-trust-page__prices" aria-labelledby="home-trust-prices-title">
           <div className="home-trust-page__section-head">
@@ -474,13 +624,23 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
             </h3>
           </div>
 
-          <div className="home-trust-page__price-grid">
-            {copy.prices.map((line) => (
-              <article key={line.label} className="home-trust-page__price">
-                <span className="home-trust-page__price-label">{line.label}</span>
-                <strong className="home-trust-page__price-value">{line.value}</strong>
-              </article>
-            ))}
+          <div className="home-trust-page__price-table-wrap">
+            <table className="home-trust-page__price-table">
+              <thead>
+                <tr>
+                  <th scope="col">{copy.priceServiceHeader}</th>
+                  <th scope="col">{copy.priceCostHeader}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {copy.prices.map((line) => (
+                  <tr key={line.label}>
+                    <td>{line.label}</td>
+                    <td>{line.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
           <article className="home-trust-page__discount">
@@ -525,6 +685,8 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
             <div className="home-trust-page__contact-links">
               <a href={phoneHref}>{phone}</a>
               <a href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a>
+              <a href={telegramHref} target="_blank" rel="noreferrer">Telegram</a>
+              <a href={viberHref}>Viber</a>
               {showEmail ? <a href={`mailto:${email}`}>{email}</a> : null}
             </div>
           </div>
@@ -615,10 +777,11 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
                 <span className="home-trust-form__field-label">{copy.formFilesLabel}</span>
                 <input
                   id={fileId}
+                  ref={fileInputRef}
                   className="home-trust-form__file-input"
                   type="file"
                   multiple
-                  accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.heic,.webp,.txt"
                   onChange={handleFilesChange}
                 />
 
@@ -632,14 +795,30 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
 
                 {files.length > 0 ? (
                   <span className="home-trust-form__file-list" aria-live="polite">
-                    {files.join(" · ")}
+                    {files.map((file, index) => (
+                      <span key={`${file.name}-${file.lastModified}-${index}`} className="home-trust-form__file-item">
+                        <span className="home-trust-form__file-name">{file.name}</span>
+                        <button
+                          type="button"
+                          className="home-trust-form__file-remove"
+                          aria-label={`Удалить файл ${file.name}`}
+                          onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            handleFileRemove(index);
+                          }}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
                   </span>
                 ) : null}
               </label>
 
               <div className="home-trust-form__actions">
-                <button type="submit" className="home-trust-form__submit">
-                  {copy.formSubmit}
+                <button type="submit" className="home-trust-form__submit" disabled={status === "submitting"}>
+                  {status === "submitting" ? copy.formSubmitPending : copy.formSubmit}
                 </button>
                 <label className="home-trust-form__consent" htmlFor={privacyId}>
                   <input
@@ -664,9 +843,9 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
                   </p>
                 ) : null}
 
-                {status === "success" ? (
+                {status === "success" || status === "submitting" ? (
                   <p className="home-trust-form__note" role="status" aria-live="polite">
-                    {statusMessage}
+                    {status === "submitting" ? copy.formSubmitPending : statusMessage}
                   </p>
                 ) : null}
               </div>

@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 
+import { businessEmail, hasBusinessEmail } from "@/src/content/contact";
 import { brandName, t } from "@/src/content/site";
 import { pagePath } from "@/src/lib/locale";
 import type { Locale } from "@/src/types";
 
-const email = "example@mail.com";
 const phone = "+374 99 586 469";
-const showEmail = email !== "example@mail.com";
+const email = businessEmail;
+const showEmail = hasBusinessEmail;
 
 export function SiteFooter({ locale }: { locale: Locale }) {
   const year = new Date().getFullYear();

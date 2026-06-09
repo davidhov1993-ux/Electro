@@ -1,19 +1,37 @@
-import { homeSeoContent, hs } from "@/src/content/homeSeo";
+import { homeFaqSeoContent, homeSeoContent, hs } from "@/src/content/homeSeo";
 import { HomeServiceWall } from "@/src/components/HomeServiceWall";
 import { HomeTrustSection } from "@/src/components/HomeTrustSection";
 import { Seo } from "@/src/components/Seo";
 import { usePageLocale } from "@/src/hooks/usePageLocale";
-import { createLocalBusinessSchema, createOrganizationSchema } from "@/src/lib/seo";
+import {
+  createFaqSchema,
+  createHomePageSchema,
+  createLocalBusinessSchema,
+  createOrganizationSchema,
+  createWebSiteSchema,
+} from "@/src/lib/seo";
 
 export function HomePage() {
   const locale = usePageLocale();
   const assetBase = import.meta.env.BASE_URL;
+  const heroMediaVersion = "20260525-brand-yellow";
   const heroVideoSrc = locale === "hy"
-    ? `${assetBase}media/DavoCriator_httpss.mj.runEUk2acGrRdc_animated_graphic_poster__8400b071-e04e-4487-930c-874b7f3bd03b_0.mp4`
-    : `${assetBase}media/DavoCriator_httpss.mj.runUJdjoo-jviU_animated_graphic_poster__34d1f2e0-a56e-408c-b0af-bd140fd198a4_0.mp4`;
+    ? `${assetBase}media/hero-hy-bg-brand-yellow.mp4?v=${heroMediaVersion}`
+    : `${assetBase}media/hero-ru-bg-brand-yellow.mp4?v=${heroMediaVersion}`;
   const heroPosterSrc = locale === "hy"
-    ? `${assetBase}media/DavoCriator_httpss.mj.runEUk2acGrRdc_animated_graphic_poster__8400b071-e04e-4487-930c-874b7f3bd03b_0.gif`
-    : undefined;
+    ? `${assetBase}media/hero-hy-bg-brand-yellow-poster.png?v=${heroMediaVersion}`
+    : `${assetBase}media/hero-ru-bg-brand-yellow-poster.png?v=${heroMediaVersion}`;
+  const socialDiscountCopy = locale === "ru"
+    ? {
+        aria: "Скидка 10 процентов пенсионерам и людям с инвалидностью",
+        label: "СКИДКА 10%",
+        text: "Пенсионерам и людям с инвалидностью",
+      }
+    : {
+        aria: "10 տոկոս զեղչ թոշակառուների և հաշմանդամություն ունեցող անձանց համար",
+        label: "10% ԶԵՂՉ",
+        text: "Թոշակառուներին և հաշմանդամություն ունեցողներին",
+      };
   const heroMarqueeItems = locale === "ru"
     ? [
         "Аварийный выезд",
@@ -44,15 +62,22 @@ export function HomePage() {
         locale={locale}
         title={hs(locale, homeSeoContent.metaTitle)}
         description={hs(locale, homeSeoContent.metaDescription)}
-        path={`/${locale}`}
-        structuredData={[createOrganizationSchema(), createLocalBusinessSchema(locale)]}
+        keywords={hs(locale, homeSeoContent.keywords)}
+        path={`/${locale}/`}
+        image={locale === "hy" ? `/media/hero-hy-bg-brand-yellow-poster.png?v=${heroMediaVersion}` : `/media/hero-ru-bg-brand-yellow-poster.png?v=${heroMediaVersion}`}
+        imageAlt={locale === "ru" ? "Электрик в Ереване" : "Էլեկտրիկ Երևանում"}
+        structuredData={[
+          createOrganizationSchema(),
+          createWebSiteSchema(locale),
+          createLocalBusinessSchema(locale),
+          createHomePageSchema(locale),
+          createFaqSchema(locale, homeFaqSeoContent),
+        ].filter((item): item is Record<string, unknown> => Boolean(item))}
       />
 
-      <section className="signal-hero signal-hero--home home-brand-hero">
+      <section className={`signal-hero signal-hero--home home-brand-hero home-brand-hero--${locale}`}>
         <h1 className="sr-only">
-          {locale === "ru"
-            ? "Электрик в Ереване: электромонтаж, аварийный выезд и инженерные системы"
-            : "Էլեկտրիկ Երևանում. էլեկտրամոնտաժ, վթարային ծառայություն և ինժեներական համակարգեր"}
+          {locale === "ru" ? "Услуги электрика в Ереване" : "Էլեկտրիկի ծառայություններ Երևանում"}
         </h1>
         <div className="home-brand-hero__viewport">
           <div className="home-brand-hero__stage">
@@ -61,6 +86,7 @@ export function HomePage() {
               <span className="home-brand-hero__glow home-brand-hero__glow--right" />
               <div className="home-brand-hero__video-shell">
                 <video
+                  key={heroVideoSrc}
                   className="home-brand-hero__video"
                   autoPlay
                   loop
@@ -78,7 +104,7 @@ export function HomePage() {
 
             <div className="home-brand-hero__action-bar">
               <a href="tel:+37499586469" className="home-brand-hero__cta home-brand-hero__cta--dark">
-                {locale === "ru" ? "Позвонить сейчас" : "Զանգահարել հիմա"}
+                {locale === "ru" ? "Позвонить сейчас" : "Զանգահարել"}
               </a>
               <a
                 href="https://wa.me/37499586469"
@@ -90,9 +116,9 @@ export function HomePage() {
               </a>
             </div>
 
-            <div className="home-brand-hero__social-discount" aria-label="Скидка 10 процентов пенсионерам и людям с инвалидностью">
-              <span className="home-brand-hero__social-discount-label">Скидка 10%</span>
-              <span className="home-brand-hero__social-discount-text">Пенсионерам и людям с инвалидностью</span>
+            <div className="home-brand-hero__social-discount" aria-label={socialDiscountCopy.aria}>
+              <span className="home-brand-hero__social-discount-label">{socialDiscountCopy.label}</span>
+              <span className="home-brand-hero__social-discount-text">{socialDiscountCopy.text}</span>
             </div>
 
             <div className="home-brand-hero__marquee" aria-label={locale === "ru" ? "Направления" : "Ուղղություններ"}>

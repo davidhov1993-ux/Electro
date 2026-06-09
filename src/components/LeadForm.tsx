@@ -2,6 +2,7 @@ import type { ChangeEvent, FormEvent } from "react";
 import { useId, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { submitContactRequest } from "@/src/lib/contactForm";
 import { pagePath } from "@/src/lib/locale";
 import type { Locale } from "@/src/types";
 
@@ -21,7 +22,7 @@ interface LeadFormState {
 }
 
 type LeadFormErrors = Partial<Record<keyof LeadFormState, string>>;
-type LeadFormStatus = "idle" | "error" | "validated";
+type LeadFormStatus = "idle" | "error" | "validated" | "submitting";
 
 function createInitialState(): LeadFormState {
   return {
@@ -40,14 +41,16 @@ const leadFormCopy = {
     message: "Сообщение",
     namePlaceholder: "Ваше имя",
     phonePlaceholder: "+374",
-    emailPlaceholder: "example@mail.com",
+    emailPlaceholder: "name@example.com",
     messagePlaceholder: "Коротко опишите задачу, объект и что именно нужно сделать.",
     filesLabel: "Файлы по объекту",
     filesButton: "Прикрепить файлы",
     filesHint: "Фото, схемы, чертежи, сметы, PDF, Word, Excel, PNG, JPG/JPEG.",
     submit: "Отправить заявку",
     hint: "Можно сразу отправить запрос и файлы по задаче.",
-    success: "Поля заполнены корректно. Следующим шагом сюда можно подключить реальную отправку заявки.",
+    success: "Заявка отправлена. Если вопрос срочный, лучше сразу позвонить.",
+    submitting: "Отправляем заявку...",
+    sendError: "Заявка не отправилась. Попробуйте ещё раз или свяжитесь с нами по телефону или WhatsApp.",
     fixErrors: "Заполните имя, телефон, email и сообщение, чтобы отправить обращение.",
     privacyPrefix: "Нажимая кнопку, вы соглашаетесь с",
     privacyLink: "Политикой конфиденциальности",
@@ -65,14 +68,16 @@ const leadFormCopy = {
     message: "Հաղորդագրություն",
     namePlaceholder: "Ձեր անունը",
     phonePlaceholder: "+374",
-    emailPlaceholder: "example@mail.com",
+    emailPlaceholder: "name@example.com",
     messagePlaceholder: "Կարճ նկարագրեք խնդիրը, օբյեկտը և ինչ պետք է անել։",
     filesLabel: "Օբյեկտի ֆայլեր",
     filesButton: "Կցել ֆայլեր",
     filesHint: "Լուսանկարներ, սխեմաներ, գծագրեր, նախահաշիվ, PDF, Word, Excel, PNG, JPG/JPEG։",
     submit: "Ուղարկել հայտը",
     hint: "Կարելի է անմիջապես ուղարկել հարցումը և առաջադրանքի ֆայլերը։",
-    success: "Դաշտերը ճիշտ են լրացված։ Հաջորդ քայլով այստեղ կարելի է միացնել հայտի իրական ուղարկումը։",
+    success: "Հայտն ուղարկված է: Եթե հարցը շտապ է, ավելի լավ է անմիջապես զանգահարել:",
+    submitting: "Հայտն ուղարկվում է...",
+    sendError: "Հայտը չի ուղարկվել։ Կրկնեք փորձը կամ կապ հաստատեք հեռախոսով կամ WhatsApp-ով:",
     fixErrors: "Լրացրեք անունը, հեռախոսը, email-ը և հաղորդագրությունը, որպեսզի դիմումն ուղարկվի։",
     privacyPrefix: "Սեղմելով կոճակը՝ Դուք համաձայնում եք",
     privacyLink: "Գաղտնիության քաղաքականությանը",
@@ -130,12 +135,20 @@ export function LeadForm({
   const [values, setValues] = useState<LeadFormState>(() => createInitialState());
   const [errors, setErrors] = useState<LeadFormErrors>({});
   const [status, setStatus] = useState<LeadFormStatus>("idle");
+  const [statusMessage, setStatusMessage] = useState("");
   const [attachmentNames, setAttachmentNames] = useState<string[]>([]);
+  const [attachmentFiles, setAttachmentFiles] = useState<File[]>([]);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [privacyError, setPrivacyError] = useState("");
 
   const note =
-    status === "validated" ? copy.success : status === "error" ? copy.fixErrors : copy.hint;
+    status === "validated"
+      ? copy.success
+      : status === "submitting"
+        ? copy.submitting
+        : status === "error"
+          ? statusMessage || copy.fixErrors
+          : copy.hint;
 
   const handleFieldChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const field = event.target.name as keyof LeadFormState;
@@ -158,6 +171,10 @@ export function LeadForm({
       setStatus("idle");
     }
 
+    if (statusMessage) {
+      setStatusMessage("");
+    }
+
     if (privacyError) {
       setPrivacyError("");
     }
@@ -165,14 +182,19 @@ export function LeadForm({
 
   const handleAttachmentsChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []).slice(0, 8);
+    setAttachmentFiles(files);
     setAttachmentNames(files.map((file) => file.name));
 
     if (status !== "idle") {
       setStatus("idle");
     }
+
+    if (statusMessage) {
+      setStatusMessage("");
+    }
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const nextErrors = validateForm(locale, values);
@@ -182,10 +204,42 @@ export function LeadForm({
 
     if (Object.keys(nextErrors).length > 0 || hasPrivacyError) {
       setStatus("error");
+      setStatusMessage(copy.fixErrors);
       return;
     }
 
-    setStatus("validated");
+    setStatus("submitting");
+    setStatusMessage("");
+
+    try {
+      const result = await submitContactRequest({
+        locale,
+        source: "lead-form",
+        name: values.name,
+        phone: values.phone,
+        email: values.email,
+        message: values.task,
+        privacyAccepted,
+        files: attachmentsEnabled ? attachmentFiles : [],
+      });
+
+      if (!result.ok) {
+        setStatus("error");
+        setStatusMessage(result.message || copy.sendError);
+        return;
+      }
+
+      setValues(createInitialState());
+      setAttachmentFiles([]);
+      setAttachmentNames([]);
+      setPrivacyAccepted(false);
+      setPrivacyError("");
+      setStatus("validated");
+      setStatusMessage(result.message || copy.success);
+    } catch {
+      setStatus("error");
+      setStatusMessage(copy.sendError);
+    }
   };
 
   const fieldClassName = (field: keyof LeadFormState) => (errors[field] ? "is-invalid" : undefined);
@@ -312,8 +366,8 @@ export function LeadForm({
       </div>
 
       <div className="form-actions">
-        <button type="submit" className="button button--primary">
-          {copy.submit}
+        <button type="submit" className="button button--primary" disabled={status === "submitting"}>
+          {status === "submitting" ? copy.submitting : copy.submit}
         </button>
         <label className="form-consent" htmlFor={privacyInputId}>
           <input

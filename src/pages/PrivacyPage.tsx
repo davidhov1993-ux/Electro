@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { Seo } from "@/src/components/Seo";
-import { brandName, staticPages, t } from "@/src/content/site";
+import { brandName, businessPhoneDisplay, businessPhoneMachine, staticPages, t } from "@/src/content/site";
 import { usePageLocale } from "@/src/hooks/usePageLocale";
 import { pagePath } from "@/src/lib/locale";
 import { createBreadcrumbSchema, createOrganizationSchema } from "@/src/lib/seo";
@@ -23,8 +23,8 @@ interface PrivacyCopy {
   backHome: string;
 }
 
-const phone = "+374 99 586 469";
-const phoneHref = "tel:+37499586469";
+const phone = businessPhoneDisplay;
+const phoneHref = `tel:${businessPhoneMachine}`;
 
 const privacyCopy: Record<Locale, PrivacyCopy> = {
   ru: {
@@ -147,7 +147,7 @@ const privacyCopy: Record<Locale, PrivacyCopy> = {
     ],
     contactsTitle: "6. Հետադարձ կապ",
     contacts: [
-      { label: "Կայքի սեփականատեր", value: "Դավիթ Հովհաննիսյան" },
+      { label: "Կայքի սեփականատեր", value: "Դավիթ Օհանեսյան" },
       { label: "Հեռախոս", value: phone },
       { label: "Քաղաք", value: "Երևան, Հայաստանի Հանրապետություն" },
     ],
@@ -172,7 +172,7 @@ export function PrivacyPage() {
         structuredData={[
           createOrganizationSchema(),
           createBreadcrumbSchema([
-            { name: locale === "ru" ? "Главная" : "Գլխավոր", path: `/${locale}` },
+            { name: locale === "ru" ? "Главная" : "Գլխավոր", path: `/${locale}/` },
             { name: t(locale, page.title), path },
           ]),
         ]}
@@ -215,7 +215,7 @@ export function PrivacyPage() {
             </section>
           </div>
 
-          <Link className="legal-page__back" to={`/${locale}`}>
+          <Link className="legal-page__back" to={`/${locale}/`}>
             {copy.backHome}
           </Link>
         </div>

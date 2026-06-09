@@ -1,3 +1,10 @@
+import {
+  businessPhoneDisplay,
+  businessPhoneMachine,
+  businessTelegramUrl,
+  businessViberUrl,
+  businessWhatsappUrl,
+} from "@/src/content/site";
 import type { Locale } from "@/src/types";
 
 interface SummaryBlock {
@@ -13,9 +20,7 @@ interface SummaryStripItem {
 interface SectionCopy {
   attention: string;
   attentionHint: string;
-  titleLineOne: string;
-  titleAccent: string;
-  titleTail: string;
+  titleLines: string[];
   triggerLabel: string;
   phone: string;
   phoneLabel: string;
@@ -35,21 +40,19 @@ const content: Record<Locale, SectionCopy> = {
   ru: {
     attention: "ВНИМАНИЕ",
     attentionHint: "Оперативная связь и выезд",
-    titleLineOne: "НУЖНО РЕШИТЬ",
-    titleAccent: "ВОПРОС",
-    titleTail: "С ЭЛЕКТРИКОЙ?",
+    titleLines: ["НУЖНО РЕШИТЬ", "ВОПРОС С ЭЛЕКТРИКОЙ?"],
     triggerLabel: "Для бесплатной консультации — звоните",
     phone: "+374 99 586 469",
     phoneLabel: "Позвонить",
     whatsappLabel: "WhatsApp",
     sectionLabel: "Вызов электрика и электромонтаж в Ереване",
     eyebrow: "С чем можно обратиться",
-    heading: "Аварийный вызов, выезд электрика и монтаж",
+    heading: "Срочный вызов электрика 24/7",
     subtitle:
       "Пропал свет, выбивает автомат, нужен монтаж или нужно переделать после других — звоните. Сразу скажем, можем ли помочь.",
     blocks: [
       {
-        title: "Авария",
+        title: "Срочный вызов электрика 24/7",
         items: [
           "пропал свет",
           "выбивает автомат",
@@ -58,21 +61,21 @@ const content: Record<Locale, SectionCopy> = {
         ],
       },
       {
-        title: "Выезд на дом",
+        title: "Монтаж электропроводки",
         items: [
-          "розетки, выключатели и свет",
-          "диагностика и поиск причины",
-          "замена автомата, розетки, выключателя",
-          "исправление после чужой работы",
+          "новая проводка и замена старой",
+          "прокладка кабеля по группам",
+          "розетки, выключатели и освещение",
+          "квартиры, дома, офисы, магазины",
         ],
       },
       {
-        title: "Монтаж",
+        title: "Установка и замена автоматов",
         items: [
-          "новая проводка и замена старой",
           "сборка щитов и защита техники",
-          "квартиры, дома, офисы, магазины",
-          "частичный и полный монтаж",
+          "замена автоматов и УЗО",
+          "реле напряжения и защита линий",
+          "диагностика щита и нагрузки",
         ],
       },
     ],
@@ -88,21 +91,19 @@ const content: Record<Locale, SectionCopy> = {
   hy: {
     attention: "ՈՒՇԱԴՐՈՒԹՅՈՒՆ",
     attentionHint: "Օպերատիվ կապ և արագ այցելություն",
-    titleLineOne: "ԷԼԵԿՏՐԱԿԱՆՈՒԹՅԱՆ ՀԵՏ ԿԱՊՎԱԾ",
-    titleAccent: "ԽՆԴԻ՞Ր",
-    titleTail: "ՈՒՆԵՔ",
+    titleLines: ["ԷԼԵԿՏՐԱԿԱՆՈՒԹՅԱՆ", "ՀԵՏ ԿԱՊՎԱԾ", "ԽՆԴԻՐ ՈՒՆԵ՞Ք"],
     triggerLabel: "Անվճար խորհրդատվության համար զանգահարեք՝",
     phone: "+374 99 586 469",
     phoneLabel: "Զանգահարել",
     whatsappLabel: "WhatsApp",
     sectionLabel: "Վթարային կանչեր, էլեկտրիկի այց և մոնտաժ",
     eyebrow: "Ինչպիսի՞ հարցերով կարող եք դիմել",
-    heading: "Վթարային կանչեր, էլեկտրիկի այց և մոնտաժ",
+    heading: "Էլեկտրիկի շտապ կանչ",
     subtitle:
       "Լույսն անջատվե՞լ է, ավտոմատը գցո՞ւմ է, մոնտաժի կամ ուրիշների թերի աշխատանքը վերանորոգելու կարի՞ք կա. զանգահարեք: Մենք անմիջապես կասենք՝ կարող ենք օգնել, թե ոչ:",
     blocks: [
       {
-        title: "Վթարային իրավիճակներ",
+        title: "Էլեկտրիկի շտապ կանչ",
         items: [
           "Լույսը հանգել է (հոսանք չկա)",
           "Ավտոմատը գցում է",
@@ -111,21 +112,21 @@ const content: Record<Locale, SectionCopy> = {
         ],
       },
       {
-        title: "Կանչով այցելություն",
+        title: "Էլեկտրոմոնտաժային աշխատանքներ",
         items: [
+          "Նոր լարանցում (պրովոդկա) և հնի փոխարինում",
           "Վարդակներ, անջատիչներ և լուսավորություն",
-          "Ախտորոշում և պատճառի հայտնաբերում",
-          "Ավտոմատի, վարդակի, անջատիչի փոխարինում",
-          "Ուրիշների սխալների ու թերի աշխատանքի շտկում",
+          "Բնակարաններ, առանձնատներ, գրասենյակներ, խանութներ",
+          "Մասնակի և ամբողջական մոնտաժ",
         ],
       },
       {
-        title: "Էլեկտրամոնտաժ",
+        title: "Մալուխների անցկացում",
         items: [
-          "Նոր լարանցում (պրովոդկա) և հնի փոխարինում",
+          "Մալուխների անցկացում ըստ խմբերի",
           "Վահանակների հավաքում և տեխնիկայի պաշտպանություն",
-          "Բնակարաններ, առանձնատներ, գրասենյակներ, խանութներ",
-          "Մասնակի և ամբողջական մոնտաժ",
+          "Ավտոմատների, ՈւԶՕ-ի և ռելեների տեղադրում",
+          "Ախտորոշում և ծանրաբեռնվածության ստուգում",
         ],
       },
     ],
@@ -143,11 +144,11 @@ const content: Record<Locale, SectionCopy> = {
 
 export function HomeServiceWall({ locale }: { locale: Locale }) {
   const c = content[locale];
-  const phoneHref = "tel:+37499586469";
-  const whatsappHref = "https://wa.me/37499586469";
+  const phoneHref = `tel:${businessPhoneMachine}`;
+  const whatsappHref = businessWhatsappUrl;
 
   return (
-    <section aria-label={c.sectionLabel} className="home-service-wall">
+    <section aria-label={c.sectionLabel} className={`home-service-wall home-service-wall--${locale}`}>
       <div id="avariinyi-vyezd" className="home-service-wall__card">
         <div aria-hidden="true" className="home-service-wall__hazard home-service-wall__hazard--top" />
 
@@ -164,16 +165,17 @@ export function HomeServiceWall({ locale }: { locale: Locale }) {
             </div>
 
             <h2 className="home-service-wall__title">
-              <span className="home-service-wall__title-line">{c.titleLineOne}</span>
-              <span className="block">
-                {c.titleAccent} {c.titleTail}
-              </span>
+              {c.titleLines.map((line) => (
+                <span key={line} className="home-service-wall__title-line">
+                  {line}
+                </span>
+              ))}
             </h2>
 
             <div className="cta-block">
               <div className="cta-left">
                 <span className="cta-label">{c.triggerLabel}</span>
-                <a href={phoneHref} className="cta-phone">{c.phone}</a>
+                <a href={phoneHref} className="cta-phone">{businessPhoneDisplay}</a>
               </div>
 
               <div className="cta-right">
@@ -199,58 +201,107 @@ export function HomeServiceWall({ locale }: { locale: Locale }) {
         <div aria-hidden="true" className="home-service-wall__hazard home-service-wall__hazard--bottom" />
       </div>
 
-      <div id="uslugi" className="home-service-wall__summary">
-        <div className="home-service-wall__summary-head">
-          <p className="home-service-wall__summary-eyebrow">{c.eyebrow}</p>
-          <h2 className="home-service-wall__summary-title">{c.heading}</h2>
-          <p className="home-service-wall__summary-subtitle">{c.subtitle}</p>
+      <HomeServiceScopeCopy
+        copy={c}
+        locale={locale}
+        phoneHref={phoneHref}
+        whatsappHref={whatsappHref}
+      />
+    </section>
+  );
+}
+
+function HomeServiceScopeCopy({
+  copy,
+  locale,
+  phoneHref,
+  whatsappHref,
+}: {
+  copy: SectionCopy;
+  locale: Locale;
+  phoneHref: string;
+  whatsappHref: string;
+}) {
+  return (
+    <div id="uslugi" className={`home-service-scope home-service-scope--${locale}`}>
+      <div className="home-service-scope__head">
+        <div className="home-service-scope__label-row">
+          <span className="home-service-scope__label-mark" aria-hidden="true" />
+          <p className="home-service-scope__eyebrow">{copy.eyebrow}</p>
         </div>
 
-        <div id="raboty" className="home-service-wall__summary-grid">
-          {c.blocks.map((block) => (
-            <section key={block.title} className="home-service-wall__summary-block">
-              <h3 className="home-service-wall__summary-block-title">{block.title}</h3>
-              <ul className="home-service-wall__summary-list">
-                {block.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
-
-        <p className="home-service-wall__summary-note">{c.note}</p>
-
-        <div className="home-service-wall__summary-footer">
-          <div className="home-service-wall__summary-strip">
-            {c.strip.map((item) => (
-              <article key={item.label} className="home-service-wall__summary-stat">
-                <strong>{item.label}</strong>
-                <span>{item.value}</span>
-              </article>
-            ))}
-          </div>
-
-          <div className="home-service-wall__summary-cta">
-            <div className="home-service-wall__summary-cta-copy">
-              <p className="home-service-wall__summary-cta-title">{c.ctaTitle}</p>
-              <p className="home-service-wall__summary-cta-text">{c.ctaText}</p>
-            </div>
-
-            <div className="home-service-wall__summary-actions">
-              <a href={phoneHref} className="btn-primary">{c.phoneLabel}</a>
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-secondary"
-              >
-                {c.whatsappLabel}
-              </a>
-            </div>
-          </div>
+        <div className="home-service-scope__headline">
+          <h2 className="home-service-scope__title">{copy.heading}</h2>
+          <p className="home-service-scope__subtitle">{copy.subtitle}</p>
         </div>
       </div>
-    </section>
+
+      <div id="raboty" className="home-service-scope__grid">
+        {copy.blocks.map((block, index) => (
+          <section key={block.title} className="home-service-scope__block">
+            <div className="home-service-scope__block-head">
+              <span className="home-service-scope__block-index" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <h3 className="home-service-scope__block-title">{block.title}</h3>
+            </div>
+
+            <ul className="home-service-scope__list">
+              {block.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+
+      <div className="home-service-scope__info">
+        <p className="home-service-scope__note">{copy.note}</p>
+
+        <div className="home-service-scope__stats">
+          {copy.strip.map((item) => (
+            <article key={item.label} className="home-service-scope__stat">
+              <strong>{item.label}</strong>
+              <span>{item.value}</span>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div className="home-service-scope__cta">
+        <div className="home-service-scope__cta-copy">
+          <p className="home-service-scope__cta-title">{copy.ctaTitle}</p>
+          <p className="home-service-scope__cta-text">{copy.ctaText}</p>
+        </div>
+
+        <div className="home-service-scope__actions">
+          <a href={phoneHref} className="home-service-scope__button home-service-scope__button--primary">
+            {copy.phoneLabel}
+          </a>
+          <a
+            href={whatsappHref}
+            target="_blank"
+            rel="noreferrer"
+            className="home-service-scope__button home-service-scope__button--ghost"
+          >
+            {copy.whatsappLabel}
+          </a>
+          <a
+            href={businessTelegramUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="home-service-scope__button home-service-scope__button--ghost"
+          >
+            Telegram
+          </a>
+          <a
+            href={businessViberUrl}
+            className="home-service-scope__button home-service-scope__button--ghost"
+          >
+            Viber
+          </a>
+        </div>
+      </div>
+    </div>
   );
 }

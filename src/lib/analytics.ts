@@ -31,7 +31,9 @@ declare global {
 
 const CONSENT_VERSION = 2;
 const STORAGE_KEY = "electro_cookie_consent_v2";
-const googleAnalyticsId = (import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined)?.trim() ?? "";
+const defaultGoogleAnalyticsId = "G-EYHDV2HW79";
+const configuredGoogleAnalyticsId = (import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined)?.trim();
+const googleAnalyticsId = configuredGoogleAnalyticsId || defaultGoogleAnalyticsId;
 const configuredConsentMode = (import.meta.env.VITE_GA_CONSENT_MODE as string | undefined)?.trim().toLowerCase();
 const consentMode: ConsentMode = configuredConsentMode === "basic" ? "basic" : "advanced";
 
