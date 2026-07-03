@@ -82,8 +82,6 @@ export function HomePage() {
         <div className="home-brand-hero__viewport">
           <div className="home-brand-hero__stage">
             <div className="home-brand-hero__media" aria-hidden="true">
-              <span className="home-brand-hero__glow home-brand-hero__glow--left" />
-              <span className="home-brand-hero__glow home-brand-hero__glow--right" />
               <div className="home-brand-hero__video-shell">
                 <video
                   key={heroVideoSrc}
@@ -99,7 +97,6 @@ export function HomePage() {
                   {heroPosterSrc ? <img src={heroPosterSrc} alt="" /> : null}
                 </video>
               </div>
-              <span className="home-brand-hero__vignette" />
             </div>
 
             <div className="home-brand-hero__action-bar">
