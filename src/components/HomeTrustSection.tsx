@@ -6,8 +6,6 @@ import { businessEmail, hasBusinessEmail } from "@/src/content/contact";
 import {
   businessPhoneDisplay,
   businessPhoneMachine,
-  businessTelegramUrl,
-  businessViberUrl,
   businessWhatsappUrl,
 } from "@/src/content/site";
 import { submitContactRequest } from "@/src/lib/contactForm";
@@ -98,8 +96,6 @@ interface TrustCopy {
 const phone = businessPhoneDisplay;
 const phoneHref = `tel:${businessPhoneMachine}`;
 const whatsappHref = businessWhatsappUrl;
-const telegramHref = businessTelegramUrl;
-const viberHref = businessViberUrl;
 const email = businessEmail;
 const showEmail = hasBusinessEmail;
 
@@ -681,8 +677,6 @@ export function HomeTrustSection({ locale }: { locale: Locale }) {
             <div className="home-trust-page__contact-links">
               <a href={phoneHref}>{phone}</a>
               <a href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a>
-              <a href={telegramHref} target="_blank" rel="noreferrer">Telegram</a>
-              <a href={viberHref}>Viber</a>
               {showEmail ? <a href={`mailto:${email}`}>{email}</a> : null}
             </div>
           </div>

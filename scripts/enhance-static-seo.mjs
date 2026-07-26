@@ -12,8 +12,6 @@ const imageByLocale = {
 };
 const phone = "+37499586469";
 const whatsappUrl = "https://wa.me/37499586469";
-const telegramUrl = readEnvValue("VITE_TELEGRAM_URL") || "https://t.me/electric_yerevan";
-const viberUrl = readEnvValue("VITE_VIBER_URL") || "viber://chat?number=%2B37499586469";
 
 const homeSeo = {
   ru: {
@@ -288,16 +286,6 @@ function createStaticSchema(route) {
             name: "WhatsApp",
             target: whatsappUrl,
           },
-          {
-            "@type": "CommunicateAction",
-            name: "Telegram",
-            target: telegramUrl,
-          },
-          {
-            "@type": "CommunicateAction",
-            name: "Viber",
-            target: viberUrl,
-          },
         ],
       },
       {
@@ -351,7 +339,7 @@ function createStaticFallback(route) {
         <section>
           <h2>${escapeHtml(route.locale === "ru" ? "Контакты" : "Կապ")}</h2>
           <p><a href="tel:${phone}">${phone}</a></p>
-          <p><a href="${whatsappUrl}">WhatsApp</a> <a href="${telegramUrl}">Telegram</a> <a href="${viberUrl}">Viber</a></p>
+          <p><a href="${whatsappUrl}">WhatsApp</a></p>
         </section>
       </main>
     </noscript>`;

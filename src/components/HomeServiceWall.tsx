@@ -1,8 +1,6 @@
 import {
   businessPhoneDisplay,
   businessPhoneMachine,
-  businessTelegramUrl,
-  businessViberUrl,
   businessWhatsappUrl,
 } from "@/src/content/site";
 import type { Locale } from "@/src/types";
@@ -285,20 +283,6 @@ function HomeServiceScopeCopy({
             className="home-service-scope__button home-service-scope__button--ghost"
           >
             {copy.whatsappLabel}
-          </a>
-          <a
-            href={businessTelegramUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="home-service-scope__button home-service-scope__button--ghost"
-          >
-            Telegram
-          </a>
-          <a
-            href={businessViberUrl}
-            className="home-service-scope__button home-service-scope__button--ghost"
-          >
-            Viber
           </a>
         </div>
       </div>

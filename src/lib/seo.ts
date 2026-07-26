@@ -2,8 +2,6 @@ import {
   brandName,
   businessPhoneDisplay,
   businessPhoneMachine,
-  businessTelegramUrl,
-  businessViberUrl,
   businessWhatsappUrl,
   siteUrl,
   t,
@@ -192,16 +190,6 @@ export function createLocalBusinessSchema(locale: Locale): Schema {
         "@type": "CommunicateAction",
         name: "WhatsApp",
         target: businessWhatsappUrl,
-      },
-      {
-        "@type": "CommunicateAction",
-        name: "Telegram",
-        target: businessTelegramUrl,
-      },
-      {
-        "@type": "CommunicateAction",
-        name: "Viber",
-        target: businessViberUrl,
       },
     ],
   };

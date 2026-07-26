@@ -13,15 +13,11 @@ export const supportedLocales: Locale[] = ["ru", "hy"];
 
 export const fallbackSiteUrl = "https://electric-yerevan.am";
 const configuredSiteUrl = (import.meta.env.VITE_SITE_URL as string | undefined)?.trim();
-const configuredTelegramUrl = (import.meta.env.VITE_TELEGRAM_URL as string | undefined)?.trim();
-const configuredViberUrl = (import.meta.env.VITE_VIBER_URL as string | undefined)?.trim();
 export const siteUrl = configuredSiteUrl ? configuredSiteUrl.replace(/\/$/, "") : fallbackSiteUrl;
 
 export const businessPhoneDisplay = "+374 99 586 469";
 export const businessPhoneMachine = "+37499586469";
 export const businessWhatsappUrl = "https://wa.me/37499586469";
-export const businessTelegramUrl = configuredTelegramUrl || "https://t.me/electric_yerevan";
-export const businessViberUrl = configuredViberUrl || "viber://chat?number=%2B37499586469";
 
 export const defaultLocale: Locale = "ru";
 
